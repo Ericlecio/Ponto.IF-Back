@@ -1,0 +1,56 @@
+services:
+  pg:
+    container_name: 'POSTGRESS'
+    image: 'postgres:latest'
+    restart: 'always'
+    networks:
+      - my-networks
+    environment:
+      POSTGRES_DB: 'pontoIf'
+      POSTGRES_USER: 'user_api'
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - '5432:5432'
+  api:
+    container_name: 'API'
+    build: .
+    restart:
+      on-failure:3
+    networks:
+      - my-networks
+    environment:
+      SPRING_DATASOURCE_URL: 'jdbc:postgresql://db:5432/'
+      SPRING_DATASOURCE_USERNAME: 'user_api'
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      ADDRESS_REDIS: 'redis://redis:6379'
+    ports:
+      - '8080:8080'
+    depends_on:
+      - redis
+      - rabbit
+      - pg
+  redis:
+    image: redis:7
+    container_name: 'REDIS'
+    depends_on:
+      - mysql
+    ports:
+      - "6379:6379"
+    networks:
+      - my-networks
+  rabbit:
+    image: rabbitmq:3-management
+    container_name: 'RABBITMQ'
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: 'pontoif'
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+networks:
+  my-networks:
+    driver: bridge
