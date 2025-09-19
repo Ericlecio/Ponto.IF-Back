@@ -19,7 +19,7 @@ services:
     networks:
       - my-networks
     environment:
-      SPRING_DATASOURCE_URL: 'jdbc:postgresql://db:5432/'
+      SPRING_DATASOURCE_URL: 'jdbc:postgresql://db:5432/pontoIf'
       SPRING_DATASOURCE_USERNAME: 'user_api'
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       ADDRESS_REDIS: 'redis://redis:6379'
