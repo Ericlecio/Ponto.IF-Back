@@ -23,11 +23,9 @@ public class Record {
     @CreationTimestamp
     private LocalDateTime date;
 
-    @ManyToMany
-    @JoinTable(
-            name = "record_biometrics",
-            joinColumns = @JoinColumn(name = "record_id"),
-            inverseJoinColumns = @JoinColumn(name = "biometric_id")
-    )
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user; //No dto ID do aluno dentro do sensor
+
     private List<Biometric> biometrics;
 }
