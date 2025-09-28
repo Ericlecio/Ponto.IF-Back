@@ -14,12 +14,12 @@ services:
   api:
     container_name: 'API'
     build: .
-    restart:
-      on-failure:3
+#    restart:
+#      on-failure:1
     networks:
       - my-networks
     environment:
-      SPRING_DATASOURCE_URL: 'jdbc:postgresql://db:5432/pontoIf'
+      SPRING_DATASOURCE_URL: 'jdbc:postgresql://pg:5432/pontoIF'
       SPRING_DATASOURCE_USERNAME: 'user_api'
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       ADDRESS_REDIS: 'redis://redis:6379'

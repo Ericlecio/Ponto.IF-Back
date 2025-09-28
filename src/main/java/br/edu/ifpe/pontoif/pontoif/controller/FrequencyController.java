@@ -14,6 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name="Frequency management Endpoints",description = "API Endpoints to manage course")
 public class FrequencyController {
 
-    private final FrequencyService frequencyService;
+    private FrequencyService frequencyService;
 
 }
