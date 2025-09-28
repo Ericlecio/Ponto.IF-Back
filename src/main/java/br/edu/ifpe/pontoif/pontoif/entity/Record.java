@@ -27,5 +27,6 @@ public class Record {
     @JoinColumn(name = "user_id")
     private User user; //No dto ID do aluno dentro do sensor
 
+
     private List<Biometric> biometrics;
 }

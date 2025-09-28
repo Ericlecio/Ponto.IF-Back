@@ -32,8 +32,6 @@ services:
   redis:
     image: redis:7
     container_name: 'REDIS'
-    depends_on:
-      - mysql
     ports:
       - "6379:6379"
     networks:
@@ -54,3 +52,6 @@ services:
 networks:
   my-networks:
     driver: bridge
+volumes:
+  rabbitmq_data:
+  postgres_data:
