@@ -1,8 +1,11 @@
 package br.edu.ifpe.pontoif.pontoif.repository;
 
+import br.edu.ifpe.pontoif.pontoif.entity.Lesson;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
-public interface LessonRepository extends JpaRepository <LessonRepository, UUID> {
+@Repository
+public interface LessonRepository extends JpaRepository <Lesson, UUID> {
 }
