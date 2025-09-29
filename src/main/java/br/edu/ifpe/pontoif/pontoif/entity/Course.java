@@ -15,8 +15,15 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    private UUID correlationId;
+
     @Column(nullable = false, length = 100)
     private String name;
+
+    @Column(nullable = false, length = 20)
+    private String acronym;
+
+    private Integer durationInMonths;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Classroom> classrooms;

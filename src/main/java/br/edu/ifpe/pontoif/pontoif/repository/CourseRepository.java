@@ -7,5 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface CourseRepositoty extends JpaRepository<Course, UUID> {
+public interface CourseRepository extends JpaRepository<Course, UUID> {
+    boolean existsByCorrelationId(UUID id);
+
+    Course findByCorrelationId(UUID id);
 }

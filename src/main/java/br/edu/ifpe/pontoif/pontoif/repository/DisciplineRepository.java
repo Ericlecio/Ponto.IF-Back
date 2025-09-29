@@ -7,5 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface DiciplineRepository extends JpaRepository<Discipline, UUID> {
+public interface DisciplineRepository extends JpaRepository<Discipline, UUID> {
+    boolean existsByCorrelationId(UUID id);
+
+    Discipline findByCorrelationId(UUID id);
 }

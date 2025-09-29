@@ -14,8 +14,12 @@ public class Discipline  {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    private UUID correlationId;
+
     @Column(length = 50)
     private String name;
+
+    private Integer workload;
 
     @ManyToOne
     @JoinColumn(name = "classroom_id")
