@@ -5,6 +5,7 @@ import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "biometrics")
@@ -22,4 +23,7 @@ public class Biometric {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "biometric", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Record> records;
 }

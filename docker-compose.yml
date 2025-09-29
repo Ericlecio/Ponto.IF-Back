@@ -1,3 +1,5 @@
+version: '3.9'
+
 services:
   pg:
     container_name: 'POSTGRESS'
@@ -6,20 +8,22 @@ services:
     networks:
       - my-networks
     environment:
-      POSTGRES_DB: 'pontoIf'
+      POSTGRES_DB: 'pontoif'
       POSTGRES_USER: 'user_api'
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   api:
     container_name: 'API'
     build: .
-#    restart:
-#      on-failure:1
+    restart: always
     networks:
       - my-networks
     environment:
-      SPRING_DATASOURCE_URL: 'jdbc:postgresql://pg:5432/pontoIF'
+      SPRING_DATASOURCE_URL: 'jdbc:postgresql://pg:5432/pontoif'
       SPRING_DATASOURCE_USERNAME: 'user_api'
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       ADDRESS_REDIS: 'redis://redis:6379'
@@ -29,6 +33,7 @@ services:
       - redis
       - rabbit
       - pg
+
   redis:
     image: redis:7
     container_name: 'REDIS'
@@ -36,6 +41,7 @@ services:
       - "6379:6379"
     networks:
       - my-networks
+
   rabbit:
     image: rabbitmq:3-management
     container_name: 'RABBITMQ'
@@ -52,6 +58,7 @@ services:
 networks:
   my-networks:
     driver: bridge
+
 volumes:
-  rabbitmq_data:
   postgres_data:
+  rabbitmq_data:

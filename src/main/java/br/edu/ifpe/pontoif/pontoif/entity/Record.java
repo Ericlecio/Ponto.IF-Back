@@ -5,7 +5,6 @@ import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -27,6 +26,7 @@ public class Record {
     @JoinColumn(name = "user_id")
     private User user; //No dto ID do aluno dentro do sensor
 
-    @ManyToMany
-    private List<Biometric> biometrics;
+    @ManyToOne
+    @JoinColumn(name = "biometric_id")
+    private Biometric biometric;
 }
