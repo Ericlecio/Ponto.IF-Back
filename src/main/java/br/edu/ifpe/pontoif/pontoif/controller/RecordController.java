@@ -1,0 +1,84 @@
+package br.edu.ifpe.pontoif.pontoif.controller;
+
+import br.edu.ifpe.pontoif.pontoif.dto.RecordDTO;
+import br.edu.ifpe.pontoif.pontoif.service.RecordService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/record")
+@RequiredArgsConstructor
+@Tag(name = "Record management", description = "API to manage attendance records")
+public class RecordController {
+
+    private final RecordService recordService;
+
+    @Operation(
+            summary = "Register a new record",
+            description = "Endpoint responsible for inserting a new record",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Record created successfully",
+                            content = @Content(schema = @Schema(hidden = true))
+                    )
+            }
+    )
+    @PostMapping
+    public ResponseEntity<Void> createRecord(@Valid @RequestBody RecordDTO recordDTO) {
+        recordService.insertRecord(recordDTO);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @Operation(
+            summary = "Get record by ID",
+            description = "Retrieve a record by its UUID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Record found"),
+                    @ApiResponse(responseCode = "404", description = "Record not found")
+            }
+    )
+    @GetMapping("/{id}")
+    public ResponseEntity<RecordDTO> getRecordById(@PathVariable UUID id) {
+        return recordService.getRecordById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @Operation(
+            summary = "List all records",
+            description = "Retrieve all attendance records from the system",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "List of records retrieved successfully")
+            }
+    )
+    @GetMapping
+    public ResponseEntity<List<RecordDTO>> getAllRecords() {
+        return ResponseEntity.ok(recordService.getAllRecords());
+    }
+
+    @Operation(
+            summary = "Delete a record",
+            description = "Deletes a record by its UUID",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "Record deleted successfully"),
+                    @ApiResponse(responseCode = "404", description = "Record not found")
+            }
+    )
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteRecord(@PathVariable UUID id) {
+        boolean deleted = recordService.deleteRecord(id);
+        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
+}
