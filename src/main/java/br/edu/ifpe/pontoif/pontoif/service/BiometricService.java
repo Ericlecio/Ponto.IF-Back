@@ -45,6 +45,10 @@ public class BiometricService {
     }
 
     public boolean matchSample(final BiometricSampleDTO biometricSampleDTO) {
-        return true;
+        //TODO: Verificar metodo de match, atualmente apenas ID sem template ou match externo
+        if (biometricRepository.existsById(biometricSampleDTO.getId()))
+
+            return true;
+        return false;
     }
 }
