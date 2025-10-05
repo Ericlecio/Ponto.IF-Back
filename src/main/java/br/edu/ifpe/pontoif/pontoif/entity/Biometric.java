@@ -21,7 +21,7 @@ public class Biometric {
     private byte[] template;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @OneToMany(mappedBy = "biometric", cascade = CascadeType.ALL, orphanRemoval = true)
