@@ -7,5 +7,4 @@ import lombok.Setter;
 @Setter
 public class BiometricSampleDTO {
     private Long id;
-    private byte[] template;
 }

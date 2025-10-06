@@ -10,5 +10,4 @@ import java.util.UUID;
 public class BiometricsDTO {
     private Long id;
     private UUID user;
-    private String template;
 }
