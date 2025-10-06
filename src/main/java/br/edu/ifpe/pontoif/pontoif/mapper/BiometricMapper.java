@@ -7,9 +7,9 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface BiometricMapper {
-
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "user.id", source = "user")
     Biometric toEntity(BiometricsDTO biometricsDTO);
 
+    @Mapping(target = "user", source = "user.id")
     BiometricsDTO toDTO(Biometric biometric);
 }
