@@ -20,6 +20,7 @@ public class DataMockLoader {
     private final DisciplineRepository disciplineRepository;
     private final ClassroomRepository classroomRepository;
     private final LessonRepository lessonRepository;
+    private final BiometricRepository biometricRepository;
 
     @PostConstruct
     public void loadMockData() {
@@ -31,6 +32,7 @@ public class DataMockLoader {
         classroomRepository.deleteAll();
         courseRepository.deleteAll();
         userRepository.deleteAll();
+        biometricRepository.deleteAll();
 
 
         User user = new User();
