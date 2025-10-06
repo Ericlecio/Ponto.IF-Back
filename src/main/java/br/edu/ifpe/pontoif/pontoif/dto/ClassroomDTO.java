@@ -8,6 +8,6 @@ import java.util.UUID;
 @Getter
 @Setter
 public class ClassroomDTO {
-    private UUID uuid;
+    private UUID id;
     private String code;
 }
