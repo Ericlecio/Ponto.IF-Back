@@ -19,6 +19,12 @@ target/
 *.iml
 *.ipr
 
+## environment ###
+.env
+.env.local
+.env.*.local
+.env.test.local
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/

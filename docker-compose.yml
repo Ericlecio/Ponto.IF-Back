@@ -1,3 +1,5 @@
+version: '3.9'
+
 services:
   pg:
     container_name: 'POSTGRESS'
@@ -6,51 +8,73 @@ services:
     networks:
       - my-networks
     environment:
-      POSTGRES_DB: 'pontoIf'
+      POSTGRES_DB: 'pontoif'
       POSTGRES_USER: 'user_api'
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   api:
     container_name: 'API'
     build: .
-    restart:
-      on-failure:3
+    restart: no
     networks:
       - my-networks
     environment:
-      SPRING_DATASOURCE_URL: 'jdbc:postgresql://db:5432/pontoIf'
+      SPRING_DATASOURCE_URL: 'jdbc:postgresql://pg:5432/pontoif'
       SPRING_DATASOURCE_USERNAME: 'user_api'
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_RABBITMQ_HOST: 'rabbit'
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: 'pontoif'
+      SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+      SPRING_RABBITMQ_VIRTUAL_HOST: '/'
+      SPRING_REDIS_PORT: 6379
+      SPRING_REDIS_HOST: 'redis'
       ADDRESS_REDIS: 'redis://redis:6379'
     ports:
       - '8080:8080'
     depends_on:
-      - redis
-      - rabbit
-      - pg
+      redis:
+        condition: service_started
+      rabbit:
+        condition: service_healthy
+      pg:
+        condition: service_started
+
   redis:
     image: redis:7
     container_name: 'REDIS'
-    depends_on:
-      - mysql
     ports:
       - "6379:6379"
     networks:
       - my-networks
+
   rabbit:
     image: rabbitmq:3-management
     container_name: 'RABBITMQ'
-    hostname: rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
+    networks:
+      - my-networks
     environment:
       RABBITMQ_DEFAULT_USER: 'pontoif'
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "check_port_connectivity" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 networks:
   my-networks:
     driver: bridge
+
+volumes:
+  postgres_data:
+  rabbitmq_data:
