@@ -8,7 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 @Slf4j
 @Component
 @Profile("dev") // executa apenas quando o perfil ativo for 'dev'
@@ -61,7 +64,9 @@ public class DataMockLoader {
         disciplineRepository.save(discipline);
 
         Lesson lesson = new Lesson();
-        lesson.setDate(LocalDateTime.now());
+        lesson.setDayOfWeek(DayOfWeek.MONDAY);            // Segunda-feira
+        lesson.setStartTime(LocalTime.of(8, 0));          // 08:00
+        lesson.setEndTime(LocalTime.of(9, 40));           // 09:40
         lesson.setDiscipline(discipline);
         lessonRepository.save(lesson);
 
