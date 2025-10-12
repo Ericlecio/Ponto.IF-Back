@@ -58,6 +58,19 @@ public class RecordController {
     }
 
     @Operation(
+            summary = "List records by multiple IDs",
+            description = "Retrieve all attendance records that match the given list of IDs",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Records retrieved successfully"),
+                    @ApiResponse(responseCode = "404", description = "Invalid list of IDs provided")
+            }
+    )
+    @GetMapping("/by-ids")
+    public ResponseEntity<List<RecordDTO>> getRecordsByIds(@RequestParam List<UUID> ids) {
+        return ResponseEntity.ok(recordService.getRecordsByIds(ids));
+    }
+
+    @Operation(
             summary = "List all records",
             description = "Retrieve all attendance records from the system",
             responses = {

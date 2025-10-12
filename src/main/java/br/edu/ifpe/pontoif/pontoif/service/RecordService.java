@@ -29,7 +29,14 @@ public class RecordService {
         return recordRepository.findById(uuid).map(recordMapper::toDTO);
     }
 
-    public List<RecordDTO> getAllRecords () {
+    public List<RecordDTO> getRecordsByIds(List<UUID> ids) {
+        return recordRepository.findAllById(ids)
+                .stream()
+                .map(recordMapper::toDTO)
+                .toList();
+    }
+
+    public List<RecordDTO> getAllRecords() {
         return recordRepository.findAll()
                 .stream()
                 .map(recordMapper::toDTO)
@@ -39,14 +46,14 @@ public class RecordService {
     @Transactional
     public Optional<RecordDTO> updateRecord(UUID uuid, final RecordDTO recordDTO) {
         return recordRepository.findById(uuid).map(existing -> {
-           existing.setDate(recordDTO.getDate());
-           return recordMapper.toDTO(recordRepository.save(existing));
+            existing.setDate(recordDTO.getDate());
+            return recordMapper.toDTO(recordRepository.save(existing));
         });
     }
 
     @Transactional
     public boolean deleteRecord(final UUID uuid) {
-        return recordRepository.findById(uuid).map( record -> {
+        return recordRepository.findById(uuid).map(record -> {
             recordRepository.delete(record);
             return true;
         }).orElse(false);
