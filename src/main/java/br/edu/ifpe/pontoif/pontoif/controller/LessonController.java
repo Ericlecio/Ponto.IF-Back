@@ -80,6 +80,7 @@ public class LessonController {
                     )
             }
     )
+    @PutMapping("/{id}")
     public ResponseEntity<LessonDTO> updateLesson(@PathVariable UUID id, @Valid @RequestBody LessonDTO lessonDTO) {
         Optional<LessonDTO> updatedLesson = lessonService.updateLesson(id, lessonDTO);
         return updatedLesson.map(ResponseEntity::ok)
@@ -96,7 +97,8 @@ public class LessonController {
     )
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLesson(@PathVariable UUID id) {
-        boolean deleted = lessonService.deleteLesson(id);
-        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        return lessonService.deleteLesson(id)
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
     }
 }
