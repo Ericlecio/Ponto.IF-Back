@@ -23,7 +23,7 @@ public class BiometricController {
     private final BiometricService biometricService;
 
     @Operation(
-            summary = "reister a new biometric",
+            summary = "Register a new biometric",
             description = "Endpoint responsible for adding a new biometric",
             responses = {
                     @ApiResponse(
@@ -51,8 +51,9 @@ public class BiometricController {
     )
     @DeleteMapping
     public ResponseEntity<Void> deleteBiometric(@RequestParam Long id) {
-        boolean deleted = biometricService.deleteBiometric(id);
-        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        return biometricService.deleteBiometric(id)
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
     }
 
     @Operation(
@@ -65,6 +66,9 @@ public class BiometricController {
     )
     @PostMapping("/sample")
     public ResponseEntity<Void> matchSample(@Valid @RequestBody BiometricSampleDTO biometricSampleDTO) {
-        return biometricService.matchSample(biometricSampleDTO) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+        return biometricService.matchSample(biometricSampleDTO)
+                .isPresent()
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.notFound().build();
     }
 }

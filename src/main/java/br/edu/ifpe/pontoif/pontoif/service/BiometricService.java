@@ -4,9 +4,9 @@ import br.edu.ifpe.pontoif.pontoif.dto.BiometricSampleDTO;
 import br.edu.ifpe.pontoif.pontoif.dto.BiometricsDTO;
 import br.edu.ifpe.pontoif.pontoif.dto.RecordDTO;
 import br.edu.ifpe.pontoif.pontoif.entity.Biometric;
+import br.edu.ifpe.pontoif.pontoif.entity.Lesson;
 import br.edu.ifpe.pontoif.pontoif.mapper.BiometricMapper;
 import br.edu.ifpe.pontoif.pontoif.repository.BiometricRepository;
-import br.edu.ifpe.pontoif.pontoif.repository.LessonRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,15 +21,15 @@ public class BiometricService {
 
     private final BiometricRepository biometricRepository;
     private final BiometricMapper biometricMapper;
+
     private final RecordService recordService;
-    //Tirar esse repository
-    private final LessonRepository lessonRepository;
+
+    private final LessonService lessonService;
 
     @Transactional
     public void insertBiometric(final BiometricsDTO biometricsDTO) {
         biometricRepository.save(biometricMapper.toEntity(biometricsDTO));
     }
-
 
     public Optional<BiometricsDTO> getBiometricById(final Long id) {
         return biometricRepository.findById(id).map(biometricMapper::toDTO);
@@ -50,21 +50,25 @@ public class BiometricService {
         }).orElse(false);
     }
 
-    public boolean matchSample(BiometricSampleDTO biometricSampleDTO) {
-        Optional<Biometric> biometric = biometricRepository.findById(biometricSampleDTO.getId());
-        if (biometric.isPresent()) {
-            recordService.insertRecord(generateDtoForRecord(biometric));
-            return true;
-        }
-        return false;
+    @Transactional
+    public Optional<Biometric> matchSample(final BiometricSampleDTO biometricSampleDTO) {
+        //TODO: Verificar qual método de mach que sera utilizado pelo sistema, atualmente apenas ID
+        return biometricRepository.findById(biometricSampleDTO.getId())
+                .flatMap(this::processMatchedBiometric);
     }
 
+    private Optional<Biometric> processMatchedBiometric(final Biometric biometric) {
+        lessonService.getCurrentLesson(biometric.getUser())
+                .ifPresent(lesson ->
+                        recordService.insertRecord(createRecordDTO(biometric, lesson)
+                ));
+        return Optional.of(biometric);
+    }
 
-    private RecordDTO generateDtoForRecord(Optional<Biometric> biometric){
-        //TODO: Implementar coleta da aula de acordo com as horas
-        RecordDTO recordDTO = new RecordDTO();
-        recordDTO.setUser(biometric.get().getUser().getId());
-        recordDTO.setLesson(lessonRepository.findAll().get(0).getId());
-        return recordDTO;
+    private RecordDTO createRecordDTO(final Biometric biometric, final Lesson lesson) {
+        RecordDTO dto = new RecordDTO();
+        dto.setUser(biometric.getUser().getId());
+        dto.setLesson(lesson.getId());
+        return dto;
     }
 }
