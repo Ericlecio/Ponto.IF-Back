@@ -37,10 +37,7 @@ public class RecordService {
     @Transactional
     public Optional<RecordDTO> updateRecord(UUID uuid, final RecordDTO recordDTO) {
         return recordRepository.findById(uuid).map(existing -> {
-           existing.setLesson(existing.getLesson());
-           existing.setDate(existing.getDate());
-           existing.setUser(existing.getUser());
-           existing.setBiometric(existing.getBiometric());
+           existing.setDate(recordDTO.getDate());
            return recordMapper.toDTO(recordRepository.save(existing));
         });
     }
