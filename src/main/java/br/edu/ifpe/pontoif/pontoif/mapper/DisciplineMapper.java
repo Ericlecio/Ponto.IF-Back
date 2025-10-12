@@ -7,10 +7,15 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface DisciplineMapper {
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "classroom", ignore = true)
-    @Mapping(target = "lessons", ignore = true)
-    @Mapping(target = "correlationId", source = "id")
-    Discipline toEntity(DisciplineDTO discipline);
 
+    @Mapping(target = "classroom.id", source = "classroom")
+    @Mapping(target = "lessons", source = "lessons")
+    Discipline toEntity(DisciplineDTO dto);
+
+    @Mapping(target = "classroom", source = "classroom.id")
+    @Mapping(target = "lessons", source = "lessons")
+    DisciplineDTO toDTO(Discipline entity);
+
+    Discipline fromId(java.util.UUID id);
+    java.util.UUID toId(Discipline discipline);
 }
