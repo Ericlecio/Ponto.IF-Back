@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -63,6 +64,24 @@ public class LessonController {
     @GetMapping
     public ResponseEntity<List<LessonDTO>> getAllLessons() {
         return ResponseEntity.ok(lessonService.getAllLessons());
+    }
+
+    @Operation(
+            summary = "Updates a Lesson by its id",
+            description = "Endpoint responsible for updating by its id",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200", description = "Lesson updated successfully"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404", description = "Lesson not found"
+                    )
+            }
+    )
+    public ResponseEntity<LessonDTO> updateLesson(@PathVariable UUID id, @Valid @RequestBody LessonDTO lessonDTO) {
+        Optional<LessonDTO> updatedLesson = lessonService.updateLesson(id, lessonDTO);
+        return updatedLesson.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Operation(

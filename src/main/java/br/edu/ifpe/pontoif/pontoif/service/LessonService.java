@@ -36,6 +36,16 @@ public class LessonService {
     }
 
     @Transactional
+    public Optional<LessonDTO> updateLesson(UUID uuid, final LessonDTO lessonDTO) {
+        return lessonRepository.findById(uuid).map(existing -> {
+            existing.setDayOfWeek(lessonDTO.getDayOfWeek());
+            existing.setStartTime(lessonDTO.getStartTime());
+            existing.setEndTime(lessonDTO.getEndTime());
+            return lessonMapper.toDTO(lessonRepository.save(existing));
+        });
+    }
+
+    @Transactional
     public boolean deleteLesson(final UUID uuid) {
         return lessonRepository.findById(uuid).map(lesson -> {
             lessonRepository.delete(lesson);
