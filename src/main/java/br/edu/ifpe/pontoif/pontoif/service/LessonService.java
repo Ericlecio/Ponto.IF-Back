@@ -14,7 +14,6 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class LessonService {
-    //TODO: Implementar update
 
     private final LessonRepository lessonRepository;
     private final LessonMapper lessonMapper;
@@ -25,7 +24,8 @@ public class LessonService {
     }
 
     public Optional<LessonDTO> getLessonById(final UUID uuid) {
-        return lessonRepository.findById(uuid).map(lessonMapper::toDTO);
+        return lessonRepository.findById(uuid)
+                .map(lessonMapper::toDTO);
     }
 
     public List<LessonDTO> getAllLessons() {

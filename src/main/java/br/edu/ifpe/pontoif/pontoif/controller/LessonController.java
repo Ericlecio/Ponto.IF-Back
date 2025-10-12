@@ -29,7 +29,9 @@ public class LessonController {
             summary = "Register a new lesson",
             description = "Endpoint responsible for adding a new lesson",
             responses = {
-                    @ApiResponse(responseCode = "201", description = "Created successfully",
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Created successfully",
                             content = @Content(schema = @Schema(hidden = true)))
             }
     )
