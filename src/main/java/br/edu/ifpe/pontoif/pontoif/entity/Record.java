@@ -24,7 +24,7 @@ public class Record {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user; //No dto ID do aluno dentro do sensor
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "biometric_id")

@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -67,6 +68,26 @@ public class RecordController {
     public ResponseEntity<List<RecordDTO>> getAllRecords() {
         return ResponseEntity.ok(recordService.getAllRecords());
     }
+
+    @Operation(
+            summary = "Updates a Record by its id",
+            description = "Endpoint responsible for updating by its id",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200", description = "Record updated successfully"
+
+                    ),
+                    @ApiResponse(
+                            responseCode = "404", description = "Record not found"
+                    )
+            }
+    )
+    public ResponseEntity<RecordDTO> updateRecord(@PathVariable UUID id, @Valid @RequestBody RecordDTO recordDTO) {
+        Optional<RecordDTO> updatedRecord = recordService.updateRecord(id, recordDTO);
+        return updatedRecord.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
 
     @Operation(
             summary = "Delete a record",

@@ -14,7 +14,6 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class RecordService {
-    //TODO: Implementar update
 
     private final RecordRepository recordRepository;
     private final RecordMapper recordMapper;
@@ -33,6 +32,17 @@ public class RecordService {
                 .stream()
                 .map(recordMapper::toDTO)
                 .toList();
+    }
+
+    @Transactional
+    public Optional<RecordDTO> updateRecord(UUID uuid, final RecordDTO recordDTO) {
+        return recordRepository.findById(uuid).map(existing -> {
+           existing.setLesson(existing.getLesson());
+           existing.setDate(existing.getDate());
+           existing.setUser(existing.getUser());
+           existing.setBiometric(existing.getBiometric());
+           return recordMapper.toDTO(recordRepository.save(existing));
+        });
     }
 
     @Transactional
