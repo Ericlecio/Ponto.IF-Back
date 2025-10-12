@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -56,14 +57,27 @@ public class DisciplineController {
     }
 
     @Operation(
+            summary = "List disciplines by multiple IDs",
+            description = "Retrieve all disciplines that match the given list of IDs",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Disciplines retrieved successfully"),
+                    @ApiResponse(responseCode = "404", description = "Invalid list of IDs provided")
+            }
+    )
+    @GetMapping("/by-ids")
+    public ResponseEntity<List<DisciplineDTO>> getDisciplinesByIds(@RequestParam List<UUID> ids) {
+        return ResponseEntity.ok(disciplineService.getDisciplinesByIds(ids));
+    }
+
+    @Operation(
             summary = "List all disciplines",
             description = "Retrieve all disciplines from the system",
             responses = {
                     @ApiResponse(responseCode = "200", description = "List retrieved successfully")
             }
     )
-    @GetMapping
-    public ResponseEntity<Iterable<DisciplineDTO>> getAllDisciplines(){
+    @GetMapping("")
+    public ResponseEntity<List<DisciplineDTO>> getAllDisciplines(){
         return ResponseEntity.ok(disciplineService.getAllDisciplines());
     }
 

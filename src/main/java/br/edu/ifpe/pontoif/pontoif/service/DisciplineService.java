@@ -35,6 +35,13 @@ public class DisciplineService {
                 .map(disciplineMapper::toDTO);
     }
 
+    public List<DisciplineDTO> getDisciplinesByIds(List<UUID> ids) {
+        return disciplineRepository.findAllById(ids)
+                .stream()
+                .map(disciplineMapper::toDTO)
+                .toList();
+    }
+
     @Transactional
     public Optional<DisciplineDTO> updateDiscipline (UUID id, final DisciplineDTO disciplineDTO) {
         return disciplineRepository.findById(id).map(existing -> {
@@ -52,4 +59,5 @@ public class DisciplineService {
             return true;
         }).orElse(false);
     }
+
 }
