@@ -5,7 +5,7 @@ import br.edu.ifpe.pontoif.pontoif.entity.Discipline;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = { ClassroomMapper.class, LessonMapper.class })
 public interface DisciplineMapper {
 
     @Mapping(target = "classroom.id", source = "classroom")
