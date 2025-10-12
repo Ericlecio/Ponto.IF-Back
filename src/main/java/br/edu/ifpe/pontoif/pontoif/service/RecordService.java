@@ -1,6 +1,8 @@
 package br.edu.ifpe.pontoif.pontoif.service;
 
 import br.edu.ifpe.pontoif.pontoif.dto.RecordDTO;
+import br.edu.ifpe.pontoif.pontoif.entity.Record;
+import br.edu.ifpe.pontoif.pontoif.entity.User;
 import br.edu.ifpe.pontoif.pontoif.mapper.RecordMapper;
 import br.edu.ifpe.pontoif.pontoif.repository.RecordRepository;
 import jakarta.transaction.Transactional;
@@ -48,5 +50,9 @@ public class RecordService {
             recordRepository.delete(record);
             return true;
         }).orElse(false);
+    }
+
+    public List<Record> getRecordsByUser(User user) {
+        return recordRepository.findAllByUserWithLessons(user);
     }
 }
