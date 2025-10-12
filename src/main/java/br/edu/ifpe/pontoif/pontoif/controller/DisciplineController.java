@@ -35,6 +35,7 @@ public class DisciplineController {
                     )
             }
     )
+    @PostMapping("")
     public ResponseEntity<Void> createDiscipline (@Valid @RequestBody DisciplineDTO disciplineDTO) {
         disciplineService.insertDiscipline(disciplineDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -49,7 +50,7 @@ public class DisciplineController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<DisciplineDTO> getDisciplineById(@PathVariable UUID id){
+    public ResponseEntity<DisciplineDTO> getDisciplineById(@PathVari1able UUID id){
         return disciplineService.getDisciplineById(id).map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -74,7 +75,7 @@ public class DisciplineController {
                     @ApiResponse(responseCode = "404", description = "Discipline not found")
             }
     )
-    @PostMapping("/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<DisciplineDTO> updateDiscipline(@PathVariable UUID id, @Valid @RequestBody DisciplineDTO disciplineDTO){
         Optional<DisciplineDTO> updatedDiscipline = disciplineService.updateDiscipline(id, disciplineDTO);
         return updatedDiscipline.map(ResponseEntity::ok)
@@ -91,7 +92,8 @@ public class DisciplineController {
     )
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDiscipline(@PathVariable UUID id){
-        boolean deleted = disciplineService.deleteDiscipline(id);
-        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        return disciplineService.deleteDiscipline(id)
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
     }
 }
