@@ -26,7 +26,7 @@ public class DisciplineController {
     private final DisciplineService disciplineService;
 
     @Operation(
-            summary = "Resister a new discipline",
+            summary = "Register a new discipline",
             description = "Endpoint responsible for adding a new discipline",
             responses = {
                     @ApiResponse(
