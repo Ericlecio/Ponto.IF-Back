@@ -36,7 +36,7 @@ public class RecordController {
                     )
             }
     )
-    @PostMapping
+    @PostMapping("")
     public ResponseEntity<Void> createRecord(@Valid @RequestBody RecordDTO recordDTO) {
         recordService.insertRecord(recordDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -64,7 +64,7 @@ public class RecordController {
                     @ApiResponse(responseCode = "200", description = "List of records retrieved successfully")
             }
     )
-    @GetMapping
+    @GetMapping("")
     public ResponseEntity<List<RecordDTO>> getAllRecords() {
         return ResponseEntity.ok(recordService.getAllRecords());
     }
@@ -82,6 +82,7 @@ public class RecordController {
                     )
             }
     )
+    @PutMapping("/{id}")
     public ResponseEntity<RecordDTO> updateRecord(@PathVariable UUID id, @Valid @RequestBody RecordDTO recordDTO) {
         Optional<RecordDTO> updatedRecord = recordService.updateRecord(id, recordDTO);
         return updatedRecord.map(ResponseEntity::ok)
@@ -99,7 +100,8 @@ public class RecordController {
     )
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRecord(@PathVariable UUID id) {
-        boolean deleted = recordService.deleteRecord(id);
-        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        return recordService.deleteRecord(id)
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
     }
 }
