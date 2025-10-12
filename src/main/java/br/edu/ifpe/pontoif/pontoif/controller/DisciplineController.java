@@ -50,7 +50,7 @@ public class DisciplineController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<DisciplineDTO> getDisciplineById(@PathVari1able UUID id){
+    public ResponseEntity<DisciplineDTO> getDisciplineById(@PathVariable UUID id){
         return disciplineService.getDisciplineById(id).map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
