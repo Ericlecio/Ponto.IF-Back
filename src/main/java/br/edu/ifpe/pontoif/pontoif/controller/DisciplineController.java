@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -30,11 +31,11 @@ public class DisciplineController {
                     @ApiResponse(
                             responseCode = "201",
                             description = "Created successfully",
-                            content = @Content (schema = @Schema(hidden = true))
+                            content = @Content(schema = @Schema(hidden = true))
                     )
             }
     )
-    public ResponseEntity<Void> createDiscipline (@Valid @RequestBody DisciplineDTO disciplineDTO) {
+    public ResponseEntity<Void> createDiscipline(@Valid @RequestBody DisciplineDTO disciplineDTO) {
         disciplineService.insertDiscipline(disciplineDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -48,7 +49,7 @@ public class DisciplineController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<DisciplineDTO> getDisciplineById(@PathVariable UUID id){
+    public ResponseEntity<DisciplineDTO> getDisciplineById(@PathVariable UUID id) {
         return disciplineService.getDisciplineById(id).map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -61,8 +62,22 @@ public class DisciplineController {
             }
     )
     @GetMapping
-    public ResponseEntity<Iterable<DisciplineDTO>> getAllDisciplines(){
+    public ResponseEntity<Iterable<DisciplineDTO>> getAllDisciplines() {
         return ResponseEntity.ok(disciplineService.getAllDisciplines());
+    }
+
+    @Operation(
+            summary = "Updates a Discipline by its id",
+            description = "Endpoint responsible for updating by its id",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Discipline updated successfully"),
+                    @ApiResponse(responseCode = "404", description = "Discipline not found")
+            }
+    )
+    public ResponseEntity<DisciplineDTO> updateDiscipline(@PathVariable UUID id, @Valid @RequestBody DisciplineDTO disciplineDTO) {
+        Optional<DisciplineDTO> updatedDiscipline = disciplineService.updateDiscipline(id, disciplineDTO);
+        return updatedDiscipline.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Operation(
@@ -74,7 +89,7 @@ public class DisciplineController {
             }
     )
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDiscipline(@PathVariable UUID id){
+    public ResponseEntity<Void> deleteDiscipline(@PathVariable UUID id) {
         boolean deleted = disciplineService.deleteDiscipline(id);
         return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
