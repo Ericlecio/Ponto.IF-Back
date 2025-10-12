@@ -57,6 +57,20 @@ public class LessonController {
     }
 
     @Operation(
+            summary = "List lessons by multiple IDs",
+            description = "Retrieve all lessons that match the given list of IDs",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Lessons retrieved successfully"),
+                    @ApiResponse(responseCode = "404", description = "Invalid list of IDs provided")
+            }
+    )
+    @GetMapping("/by-ids")
+    public ResponseEntity<List<LessonDTO>> getLessonsByIds(@RequestParam List<UUID> ids) {
+        return ResponseEntity.ok(lessonService.getLessonsByIds(ids));
+    }
+
+
+    @Operation(
             summary = "List all lessons",
             description = "Retrieve all lessons from the system",
             responses = {

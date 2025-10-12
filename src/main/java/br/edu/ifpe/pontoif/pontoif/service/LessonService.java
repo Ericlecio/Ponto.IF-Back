@@ -43,6 +43,13 @@ public class LessonService {
                 .toList();
     }
 
+    public List<LessonDTO> getLessonsByIds(List<UUID> ids) {
+        return lessonRepository.findAllById(ids)
+                .stream()
+                .map(lessonMapper::toDTO)
+                .toList();
+    }
+
     @Transactional
     public Optional<LessonDTO> updateLesson(UUID uuid, final LessonDTO lessonDTO) {
         return lessonRepository.findById(uuid).map(existing -> {
@@ -73,4 +80,5 @@ public class LessonService {
                 .map(Optional::get)
                 .findFirst();
     }
+
 }
