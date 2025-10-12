@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -63,6 +64,21 @@ public class DisciplineController {
     @GetMapping
     public ResponseEntity<Iterable<DisciplineDTO>> getAllDisciplines(){
         return ResponseEntity.ok(disciplineService.getAllDisciplines());
+    }
+
+    @Operation(
+            summary = "Update a discipline by its id",
+            description = "Endpoint responsible for updating by its id",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Discipline updated successfully"),
+                    @ApiResponse(responseCode = "404", description = "Discipline not found")
+            }
+    )
+    @PostMapping("/{id}")
+    public ResponseEntity<DisciplineDTO> updateDiscipline(@PathVariable UUID id, @Valid @RequestBody DisciplineDTO disciplineDTO){
+        Optional<DisciplineDTO> updatedDiscipline = disciplineService.updateDiscipline(id, disciplineDTO);
+        return updatedDiscipline.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Operation(
