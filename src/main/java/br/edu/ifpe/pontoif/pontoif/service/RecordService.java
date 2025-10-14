@@ -1,6 +1,8 @@
 package br.edu.ifpe.pontoif.pontoif.service;
 
 import br.edu.ifpe.pontoif.pontoif.dto.RecordDTO;
+import br.edu.ifpe.pontoif.pontoif.entity.Record;
+import br.edu.ifpe.pontoif.pontoif.entity.User;
 import br.edu.ifpe.pontoif.pontoif.mapper.RecordMapper;
 import br.edu.ifpe.pontoif.pontoif.repository.RecordRepository;
 import jakarta.transaction.Transactional;
@@ -14,7 +16,6 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class RecordService {
-    //TODO: Implementar update
 
     private final RecordRepository recordRepository;
     private final RecordMapper recordMapper;
@@ -28,7 +29,14 @@ public class RecordService {
         return recordRepository.findById(uuid).map(recordMapper::toDTO);
     }
 
-    public List<RecordDTO> getAllRecords () {
+    public List<RecordDTO> getRecordsByIds(List<UUID> ids) {
+        return recordRepository.findAllById(ids)
+                .stream()
+                .map(recordMapper::toDTO)
+                .toList();
+    }
+
+    public List<RecordDTO> getAllRecords() {
         return recordRepository.findAll()
                 .stream()
                 .map(recordMapper::toDTO)
@@ -36,10 +44,22 @@ public class RecordService {
     }
 
     @Transactional
+    public Optional<RecordDTO> updateRecord(UUID uuid, final RecordDTO recordDTO) {
+        return recordRepository.findById(uuid).map(existing -> {
+            existing.setDate(recordDTO.getDate());
+            return recordMapper.toDTO(recordRepository.save(existing));
+        });
+    }
+
+    @Transactional
     public boolean deleteRecord(final UUID uuid) {
-        return recordRepository.findById(uuid).map( record -> {
+        return recordRepository.findById(uuid).map(record -> {
             recordRepository.delete(record);
             return true;
         }).orElse(false);
+    }
+
+    public List<Record> getRecordsByUser(User user) {
+        return recordRepository.findAllByUserWithLessons(user);
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -35,7 +36,7 @@ public class RecordController {
                     )
             }
     )
-    @PostMapping
+    @PostMapping("")
     public ResponseEntity<Void> createRecord(@Valid @RequestBody RecordDTO recordDTO) {
         recordService.insertRecord(recordDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -57,16 +58,45 @@ public class RecordController {
     }
 
     @Operation(
+            summary = "List records by multiple IDs",
+            description = "Retrieve all attendance records that match the given list of IDs",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Records retrieved successfully"),
+                    @ApiResponse(responseCode = "404", description = "Invalid list of IDs provided")
+            }
+    )
+    @GetMapping("/by-ids")
+    public ResponseEntity<List<RecordDTO>> getRecordsByIds(@RequestParam List<UUID> ids) {
+        return ResponseEntity.ok(recordService.getRecordsByIds(ids));
+    }
+
+    @Operation(
             summary = "List all records",
             description = "Retrieve all attendance records from the system",
             responses = {
                     @ApiResponse(responseCode = "200", description = "List of records retrieved successfully")
             }
     )
-    @GetMapping
+    @GetMapping("")
     public ResponseEntity<List<RecordDTO>> getAllRecords() {
         return ResponseEntity.ok(recordService.getAllRecords());
     }
+
+    @Operation(
+            summary = "Updates a Record by its id",
+            description = "Endpoint responsible for updating by its id",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Record updated successfully"),
+                    @ApiResponse(responseCode = "404", description = "Record not found")
+            }
+    )
+    @PutMapping("/{id}")
+    public ResponseEntity<RecordDTO> updateRecord(@PathVariable UUID id, @Valid @RequestBody RecordDTO recordDTO) {
+        Optional<RecordDTO> updatedRecord = recordService.updateRecord(id, recordDTO);
+        return updatedRecord.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
 
     @Operation(
             summary = "Delete a record",
@@ -78,7 +108,8 @@ public class RecordController {
     )
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRecord(@PathVariable UUID id) {
-        boolean deleted = recordService.deleteRecord(id);
-        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        return recordService.deleteRecord(id)
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
     }
 }

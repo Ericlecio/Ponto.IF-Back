@@ -3,7 +3,8 @@ package br.edu.ifpe.pontoif.pontoif.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,7 +16,12 @@ public class Lesson {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private LocalDateTime date;
+    @Enumerated(EnumType.STRING)
+    private DayOfWeek dayOfWeek;
+
+    private LocalTime startTime;
+
+    private LocalTime endTime;
 
     @ManyToOne
     @JoinColumn(name = "discipline_id")

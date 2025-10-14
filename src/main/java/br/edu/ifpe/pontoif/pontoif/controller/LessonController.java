@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -28,7 +29,9 @@ public class LessonController {
             summary = "Register a new lesson",
             description = "Endpoint responsible for adding a new lesson",
             responses = {
-                    @ApiResponse(responseCode = "201", description = "Created successfully",
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Created successfully",
                             content = @Content(schema = @Schema(hidden = true)))
             }
     )
@@ -54,6 +57,20 @@ public class LessonController {
     }
 
     @Operation(
+            summary = "List lessons by multiple IDs",
+            description = "Retrieve all lessons that match the given list of IDs",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Lessons retrieved successfully"),
+                    @ApiResponse(responseCode = "404", description = "Invalid list of IDs provided")
+            }
+    )
+    @GetMapping("/by-ids")
+    public ResponseEntity<List<LessonDTO>> getLessonsByIds(@RequestParam List<UUID> ids) {
+        return ResponseEntity.ok(lessonService.getLessonsByIds(ids));
+    }
+
+
+    @Operation(
             summary = "List all lessons",
             description = "Retrieve all lessons from the system",
             responses = {
@@ -66,6 +83,25 @@ public class LessonController {
     }
 
     @Operation(
+            summary = "Updates a Lesson by its id",
+            description = "Endpoint responsible for updating by its id",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200", description = "Lesson updated successfully"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404", description = "Lesson not found"
+                    )
+            }
+    )
+    @PutMapping("/{id}")
+    public ResponseEntity<LessonDTO> updateLesson(@PathVariable UUID id, @Valid @RequestBody LessonDTO lessonDTO) {
+        Optional<LessonDTO> updatedLesson = lessonService.updateLesson(id, lessonDTO);
+        return updatedLesson.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @Operation(
             summary = "Delete a lesson",
             description = "Deletes a lesson by its UUID",
             responses = {
@@ -75,7 +111,8 @@ public class LessonController {
     )
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLesson(@PathVariable UUID id) {
-        boolean deleted = lessonService.deleteLesson(id);
-        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        return lessonService.deleteLesson(id)
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
     }
 }
