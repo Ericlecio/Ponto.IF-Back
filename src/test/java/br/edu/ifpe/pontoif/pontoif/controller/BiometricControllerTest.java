@@ -3,31 +3,40 @@ package br.edu.ifpe.pontoif.pontoif.controller;
 import br.edu.ifpe.pontoif.pontoif.dto.BiometricSampleDTO;
 import br.edu.ifpe.pontoif.pontoif.dto.BiometricsDTO;
 import br.edu.ifpe.pontoif.pontoif.entity.Biometric;
+import br.edu.ifpe.pontoif.pontoif.entity.Role;
+import br.edu.ifpe.pontoif.pontoif.entity.User;
 import br.edu.ifpe.pontoif.pontoif.service.BiometricService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(BiometricController.class)
+@WebMvcTest(controllers = BiometricController.class,
+        excludeAutoConfiguration = {
+                org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class,
+                org.springframework.security.config.annotation.web.builders.HttpSecurity.class
+        })
 class BiometricControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private BiometricService biometricService;
 
     @Autowired
@@ -42,8 +51,10 @@ class BiometricControllerTest {
 
         // When & Then
         mockMvc.perform(post("/biometric")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(biometricsDTO)))
+
                 .andExpect(status().isCreated());
 
         verify(biometricService, times(1)).insertBiometric(any(BiometricsDTO.class));
@@ -58,6 +69,7 @@ class BiometricControllerTest {
 
         // When & Then
         mockMvc.perform(delete("/biometric")
+                        .with(csrf())
                         .param("id", id.toString()))
                 .andExpect(status().isNoContent());
 
@@ -73,6 +85,7 @@ class BiometricControllerTest {
 
         // When & Then
         mockMvc.perform(delete("/biometric")
+                        .with(csrf())
                         .param("id", id.toString()))
                 .andExpect(status().isNotFound());
 
@@ -88,6 +101,15 @@ class BiometricControllerTest {
 
         Biometric biometric = new Biometric();
         biometric.setId(222222222L);
+        var user = User.builder()
+                .id(UUID.randomUUID())
+                .name("Test User")
+                .email("teste@email.com")
+                .role(Role.STUDENT)
+                .build();
+        biometric.setUser(user);
+        biometric.setRecords(new ArrayList<>());
+        biometric.setCreatedAt(LocalDateTime.now());
 
         when(biometricService.matchSample(sampleDTO)).thenReturn(Optional.of(biometric));
 
