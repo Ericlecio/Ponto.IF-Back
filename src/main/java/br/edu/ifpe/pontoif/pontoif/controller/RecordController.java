@@ -86,13 +86,8 @@ public class RecordController {
             summary = "Updates a Record by its id",
             description = "Endpoint responsible for updating by its id",
             responses = {
-                    @ApiResponse(
-                            responseCode = "200", description = "Record updated successfully"
-
-                    ),
-                    @ApiResponse(
-                            responseCode = "404", description = "Record not found"
-                    )
+                    @ApiResponse(responseCode = "200", description = "Record updated successfully"),
+                    @ApiResponse(responseCode = "404", description = "Record not found")
             }
     )
     @PutMapping("/{id}")
