@@ -10,6 +10,7 @@ import java.util.UUID;
 @Mapper(componentModel = "spring")
 public interface RecordMapper {
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "user.id", source = "user")
     @Mapping(target = "lesson.id", source = "lesson")
     Record toEntity(RecordDTO recordDTO);
