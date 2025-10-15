@@ -21,7 +21,11 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(LessonController.class)
+@WebMvcTest(controllers = LessonController.class,
+        excludeAutoConfiguration = {
+                org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class,
+                org.springframework.security.config.annotation.web.builders.HttpSecurity.class
+        })
 class LessonControllerTest {
 
     @Autowired
