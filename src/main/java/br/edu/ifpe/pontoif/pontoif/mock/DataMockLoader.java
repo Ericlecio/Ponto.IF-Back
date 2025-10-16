@@ -1,12 +1,14 @@
 package br.edu.ifpe.pontoif.pontoif.mock;
 
 import br.edu.ifpe.pontoif.pontoif.entity.*;
+import br.edu.ifpe.pontoif.pontoif.entity.Record;
 import br.edu.ifpe.pontoif.pontoif.repository.*;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
@@ -24,6 +26,7 @@ public class DataMockLoader {
     private final ClassroomRepository classroomRepository;
     private final LessonRepository lessonRepository;
     private final BiometricRepository biometricRepository;
+    private final RecordRepository recordRepository;
 
     @PostConstruct
     public void loadMockData() {
@@ -43,6 +46,11 @@ public class DataMockLoader {
         user.setEmail("maria.santos@ifpe.edu.br");
         user.setRegistration("IFPE2025A01");
         userRepository.save(user);
+
+        Biometric biometric = new Biometric();
+        biometric.setId(1L);
+        biometric.setUser(user);
+        biometricRepository.save(biometric);
 
         Course course = new Course();
         course.setName("Engenharia de Software");
@@ -64,11 +72,17 @@ public class DataMockLoader {
         disciplineRepository.save(discipline);
 
         Lesson lesson = new Lesson();
-        lesson.setDayOfWeek(DayOfWeek.MONDAY);            // Segunda-feira
+        lesson.setDayOfWeek(DayOfWeek.MONDAY);
         lesson.setStartTime(LocalTime.of(8, 0));          // 08:00
         lesson.setEndTime(LocalTime.of(9, 40));           // 09:40
         lesson.setDiscipline(discipline);
         lessonRepository.save(lesson);
+
+        Record record = new Record();
+        record.setLesson(lesson);
+        record.setBiometric(biometric);
+        record.setUser(user);
+        recordRepository.save(record);
 
         log.info("Dados mockados inseridos com sucesso!");
     }
