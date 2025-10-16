@@ -41,6 +41,14 @@ public class ClassroomService {
     }
 
     @Transactional
+    public Optional<ClassroomDTO> updateClassroom(final UUID uuid, final ClassroomDTO classroomDTO) {
+        return classroomRepository.findById(uuid).map(existing -> {
+            existing.setCode(classroomDTO.getCode());
+            return classroomMapper.toDTO(classroomRepository.save(existing));
+        });
+    }
+
+    @Transactional
     public List<UUID> getDisciplineIdsByClassroomId(UUID classroomId) {
         Classroom classroom = classroomRepository.findById(classroomId)
                 .orElseThrow(() -> new EntityNotFoundException("Classroom not found: " + classroomId));
@@ -59,14 +67,4 @@ public class ClassroomService {
         }).orElse(false);
     }
 
-    @Transactional
-    public Optional<ClassroomDTO> updateClassroom(final UUID uuid, final ClassroomDTO classroomDTO) {
-        return classroomRepository.findById(uuid)
-            .map(existingClassroom -> {
-                classroomMapper.updateEntityFromDto(classroomDTO, existingClassroom);
-                Classroom updatedClassroom = classroomRepository.save(existingClassroom);
-                return classroomMapper.toDTO(updatedClassroom);
-            }
-        );
-    }
 }

@@ -7,7 +7,7 @@ import org.mapstruct.Mapping;
 
 import java.util.UUID;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = { DisciplineMapper.class, CourseMapper.class })
 public interface ClassroomMapper {
 
     @Mapping(target = "id", ignore = true)
