@@ -13,11 +13,11 @@ public interface CourseMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "classrooms", ignore = true)
     @Mapping(target = "correlationId", source = "id")
-    @Mapping(target = "durationInMonths", source = "duration")
     Course toEntity(CourseDTO dto);
+
 
     CourseDTO toDTO(Course entity);
 
-    Course fromId(java.util.UUID id);
+    Course fromId(UUID id);
     UUID toId(Course course);
 }
