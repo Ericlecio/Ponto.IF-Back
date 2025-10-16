@@ -5,6 +5,8 @@ import br.edu.ifpe.pontoif.pontoif.entity.Discipline;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.UUID;
+
 @Mapper(componentModel = "spring", uses = { ClassroomMapper.class, LessonMapper.class })
 public interface DisciplineMapper {
 
@@ -17,6 +19,6 @@ public interface DisciplineMapper {
     @Mapping(target = "lessons", source = "lessons")
     DisciplineDTO toDTO(Discipline entity);
 
-    Discipline fromId(java.util.UUID id);
-    java.util.UUID toId(Discipline discipline);
+    Discipline fromId(UUID id);
+    UUID toId(Discipline discipline);
 }
