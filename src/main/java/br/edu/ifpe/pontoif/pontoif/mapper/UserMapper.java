@@ -13,4 +13,9 @@ public interface UserMapper {
     @Mapping(target = "isActive", ignore = true)
     @Mapping(target = "biometrics", ignore = true)
     User toEntity(UserDTO dto);
+
+    UserDTO toDTO(User entity);
+
+    User fromId(java.util.UUID id);
+    java.util.UUID toId(User user);
 }

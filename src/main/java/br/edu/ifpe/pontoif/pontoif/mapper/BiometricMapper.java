@@ -13,4 +13,5 @@ public interface BiometricMapper {
 
     @Mapping(target = "user", source = "user.id")
     BiometricsDTO toDTO(Biometric biometric);
+
 }

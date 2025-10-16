@@ -13,8 +13,6 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface ClassroomMapper {
 
-
-    @Mapping(target = "course", source = "courseId", qualifiedByName = "mapIdToCourse")
     Classroom toEntity(ClassroomDTO classroomDTO);
 
     @Mapping(target = "courseId", source = "course.id")
