@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -78,4 +79,42 @@ public class ClassroomController {
         boolean deleted = classroomService.deleteClassroom(id);
         return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
+
+    @Operation(
+            summary = "List all course IDs",
+            description = "Recover all classroom subjects",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "List retrieved successfully"),
+                    @ApiResponse(responseCode = "404", description = "Disciplines not found")
+            }
+    )
+    @GetMapping("/{id}/disciplines")
+    public ResponseEntity<List<UUID>> getDisciplineIds(@PathVariable UUID id) {
+        List<UUID> disciplineIds = classroomService.getDisciplineIdsByClassroomId(id);
+        return ResponseEntity.ok(disciplineIds);
+    }
+
+
+    @Operation(
+            summary = "Update a classroom",
+            description = "Updates an existing classroom by its UUID. Any null fields in the request will be ignored.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Classroom updated successfully",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ClassroomDTO.class))
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Classroom not found"),
+                    @ApiResponse(responseCode = "400", description = "Invalid request data")
+            }
+    )
+    @PutMapping("/{id}")
+    public ResponseEntity<ClassroomDTO> updateClassroom(@PathVariable final UUID id, @RequestBody final ClassroomDTO classroomDTO) {
+        final Optional<ClassroomDTO> updatedClassroom = classroomService.updateClassroom(id, classroomDTO);
+        return updatedClassroom
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
 }
