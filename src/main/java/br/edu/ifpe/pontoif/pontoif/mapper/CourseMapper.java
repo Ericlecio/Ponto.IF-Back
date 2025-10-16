@@ -5,19 +5,36 @@ import br.edu.ifpe.pontoif.pontoif.entity.Course;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.Objects;
 
 @Mapper(componentModel = "spring")
 public interface CourseMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "classrooms", ignore = true)
-    @Mapping(target = "correlationId", source = "id")
     Course toEntity(CourseDTO dto);
-
 
     CourseDTO toDTO(Course entity);
 
-    Course fromId(UUID id);
-    UUID toId(Course course);
+    default Course fromId(UUID id) {
+        if (id == null) return null;
+        Course c = new Course();
+        c.setId(id);
+        return c;
+    }
+
+    default UUID toId(Course course) {
+        return course != null ? course.getId() : null;
+    }
+
+    default List<UUID> toIdList(List<Course> list) {
+        if (list == null) return null;
+        return list.stream().map(this::toId).filter(Objects::nonNull).toList();
+    }
+
+    default List<Course> fromIdList(List<UUID> list) {
+        if (list == null) return null;
+        return list.stream().map(this::fromId).toList();
+    }
 }
