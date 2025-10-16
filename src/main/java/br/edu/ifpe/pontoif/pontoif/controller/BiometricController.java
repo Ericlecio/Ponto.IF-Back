@@ -1,7 +1,7 @@
 package br.edu.ifpe.pontoif.pontoif.controller;
 
 import br.edu.ifpe.pontoif.pontoif.dto.BiometricSampleDTO;
-import br.edu.ifpe.pontoif.pontoif.dto.BiometricsDTO;
+import br.edu.ifpe.pontoif.pontoif.dto.BiometricDTO;
 import br.edu.ifpe.pontoif.pontoif.service.BiometricService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -36,8 +36,8 @@ public class BiometricController {
             }
     )
     @PostMapping("")
-    public ResponseEntity<Void> registerNewBiometric(@Valid @RequestBody BiometricsDTO biometricsDTO) {
-        biometricService.insertBiometric(biometricsDTO);
+    public ResponseEntity<Void> registerNewBiometric(@Valid @RequestBody BiometricDTO biometricDTO) {
+        biometricService.insertBiometric(biometricDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

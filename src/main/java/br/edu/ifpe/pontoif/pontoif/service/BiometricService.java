@@ -1,7 +1,7 @@
 package br.edu.ifpe.pontoif.pontoif.service;
 
 import br.edu.ifpe.pontoif.pontoif.dto.BiometricSampleDTO;
-import br.edu.ifpe.pontoif.pontoif.dto.BiometricsDTO;
+import br.edu.ifpe.pontoif.pontoif.dto.BiometricDTO;
 import br.edu.ifpe.pontoif.pontoif.dto.RecordDTO;
 import br.edu.ifpe.pontoif.pontoif.entity.Biometric;
 import br.edu.ifpe.pontoif.pontoif.entity.Lesson;
@@ -27,15 +27,15 @@ public class BiometricService {
     private final LessonService lessonService;
 
     @Transactional
-    public void insertBiometric(final BiometricsDTO biometricsDTO) {
-        biometricRepository.save(biometricMapper.toEntity(biometricsDTO));
+    public void insertBiometric(final BiometricDTO biometricDTO) {
+        biometricRepository.save(biometricMapper.toEntity(biometricDTO));
     }
 
-    public Optional<BiometricsDTO> getBiometricById(final Long id) {
+    public Optional<BiometricDTO> getBiometricById(final Long id) {
         return biometricRepository.findById(id).map(biometricMapper::toDTO);
     }
 
-    public List<BiometricsDTO> getAllBiometrics(Long id) {
+    public List<BiometricDTO> getAllBiometrics(Long id) {
         return biometricRepository.findAll()
                 .stream()
                 .map(biometricMapper::toDTO)
