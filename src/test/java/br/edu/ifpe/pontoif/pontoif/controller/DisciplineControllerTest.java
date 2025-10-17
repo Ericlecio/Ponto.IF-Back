@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -54,7 +55,7 @@ class DisciplineControllerTest {
     @Test
     void shouldGetDisciplineById() throws Exception {
         // Given
-        UUID id = UUID.randomUUID();
+        UUID id = UUID.fromString("550e8400-e29b-41d4-a716-446655440012");
         DisciplineDTO disciplineDTO = new DisciplineDTO();
         disciplineDTO.setName("Estrutura de Dados");
         disciplineDTO.setWorkload(70);
@@ -71,7 +72,7 @@ class DisciplineControllerTest {
     @Test
     void shouldReturnNotFoundWhenDisciplineNotExists() throws Exception {
         // Given
-        UUID id = UUID.randomUUID();
+        UUID id = UUID.fromString("550e8400-e29b-41d4-a716-446655440013");
         when(disciplineService.getDisciplineById(id)).thenReturn(Optional.empty());
 
         // When & Then
@@ -103,8 +104,8 @@ class DisciplineControllerTest {
     @Test
     void shouldGetDisciplinesByIds() throws Exception {
         // Given
-        UUID id1 = UUID.randomUUID();
-        UUID id2 = UUID.randomUUID();
+        UUID id1 = UUID.fromString("550e8400-e29b-41d4-a716-446655440014");
+        UUID id2 = UUID.fromString("550e8400-e29b-41d4-a716-446655440015");
         List<UUID> ids = List.of(id1, id2);
 
         DisciplineDTO discipline1 = new DisciplineDTO();
@@ -127,7 +128,7 @@ class DisciplineControllerTest {
     @Test
     void shouldUpdateDiscipline() throws Exception {
         // Given
-        UUID id = UUID.randomUUID();
+        UUID id = UUID.fromString("550e8400-e29b-41d4-a716-446655440016");
         DisciplineDTO updateDTO = new DisciplineDTO();
         updateDTO.setName("Programação II");
         updateDTO.setWorkload(80);
@@ -136,7 +137,7 @@ class DisciplineControllerTest {
         updatedDiscipline.setName("Programação II");
         updatedDiscipline.setWorkload(80);
 
-        when(disciplineService.updateDiscipline(id, updateDTO)).thenReturn(Optional.of(updatedDiscipline));
+        when(disciplineService.updateDiscipline(eq(id), any(DisciplineDTO.class))).thenReturn(Optional.of(updatedDiscipline));
 
         // When & Then
         mockMvc.perform(put("/discipline/{id}", id)
@@ -150,7 +151,7 @@ class DisciplineControllerTest {
     @Test
     void shouldReturnNotFoundWhenUpdatingNonExistentDiscipline() throws Exception {
         // Given
-        UUID id = UUID.randomUUID();
+        UUID id = UUID.fromString("550e8400-e29b-41d4-a716-446655440017");
         DisciplineDTO updateDTO = new DisciplineDTO();
         updateDTO.setName("Disciplina Atualizada");
         updateDTO.setWorkload(90);
@@ -167,7 +168,7 @@ class DisciplineControllerTest {
     @Test
     void shouldDeleteDiscipline() throws Exception {
         // Given
-        UUID id = UUID.randomUUID();
+        UUID id = UUID.fromString("550e8400-e29b-41d4-a716-446655440018");
         when(disciplineService.deleteDiscipline(id)).thenReturn(true);
 
         // When & Then
@@ -180,7 +181,7 @@ class DisciplineControllerTest {
     @Test
     void shouldReturnNotFoundWhenDeletingNonExistentDiscipline() throws Exception {
         // Given
-        UUID id = UUID.randomUUID();
+        UUID id = UUID.fromString("550e8400-e29b-41d4-a716-446655440019");
         when(disciplineService.deleteDiscipline(id)).thenReturn(false);
 
         // When & Then

@@ -8,11 +8,13 @@ import java.util.UUID;
 
 @Mapper(componentModel = "spring")
 public interface ClassroomMapper {
-
+    
     Classroom toEntity(ClassroomDTO classroomDTO);
 
     ClassroomDTO toDTO(Classroom classroom);
 
     Classroom fromId(UUID id);
-    UUID toId(Classroom classroom);
+    default UUID toId(Classroom classroom) {
+        return classroom != null ? classroom.getId() : null;
+    }
 }

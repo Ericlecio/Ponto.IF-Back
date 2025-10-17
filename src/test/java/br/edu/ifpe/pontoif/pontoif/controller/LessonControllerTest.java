@@ -57,8 +57,9 @@ class LessonControllerTest {
     @Test
     void shouldGetLessonById() throws Exception {
         // Given
-        UUID id = UUID.randomUUID();
+        UUID id = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
         LessonDTO lessonDTO = new LessonDTO();
+        lessonDTO.setId(id);
         lessonDTO.setDayOfWeek(DayOfWeek.TUESDAY);
         lessonDTO.setStartTime(LocalTime.of(14, 0));
         lessonDTO.setEndTime(LocalTime.of(16, 0));
@@ -68,6 +69,7 @@ class LessonControllerTest {
         // When & Then
         mockMvc.perform(get("/lesson/{id}", id))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id.toString()))
                 .andExpect(jsonPath("$.dayOfWeek").value("TUESDAY"))
                 .andExpect(jsonPath("$.startTime").value("14:00:00"))
                 .andExpect(jsonPath("$.endTime").value("16:00:00"));
@@ -136,24 +138,26 @@ class LessonControllerTest {
     @Test
     void shouldUpdateLesson() throws Exception {
         // Given
-        UUID id = UUID.randomUUID();
+        UUID id = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
         LessonDTO updateDTO = new LessonDTO();
         updateDTO.setDayOfWeek(DayOfWeek.FRIDAY);
         updateDTO.setStartTime(LocalTime.of(16, 0));
         updateDTO.setEndTime(LocalTime.of(18, 0));
 
         LessonDTO updatedLesson = new LessonDTO();
+        updatedLesson.setId(id);
         updatedLesson.setDayOfWeek(DayOfWeek.FRIDAY);
         updatedLesson.setStartTime(LocalTime.of(16, 0));
         updatedLesson.setEndTime(LocalTime.of(18, 0));
 
-        when(lessonService.updateLesson(id, updateDTO)).thenReturn(Optional.of(updatedLesson));
+        when(lessonService.updateLesson(eq(id), any(LessonDTO.class))).thenReturn(Optional.of(updatedLesson));
 
         // When & Then
         mockMvc.perform(put("/lesson/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDTO)))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id.toString()))
                 .andExpect(jsonPath("$.dayOfWeek").value("FRIDAY"))
                 .andExpect(jsonPath("$.startTime").value("16:00:00"))
                 .andExpect(jsonPath("$.endTime").value("18:00:00"));

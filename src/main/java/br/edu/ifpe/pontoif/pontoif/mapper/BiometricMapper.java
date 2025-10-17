@@ -13,4 +13,9 @@ public interface BiometricMapper {
 
     @Mapping(target = "user", source = "user.id")
     BiometricsDTO toDTO(Biometric biometric);
+
+    Biometric fromId(Long id);
+    default Long toId(Biometric biometric) {
+        return biometric != null ? biometric.getId() : null;
+    }
 }

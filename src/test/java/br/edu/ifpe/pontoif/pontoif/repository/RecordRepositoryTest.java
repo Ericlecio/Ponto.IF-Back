@@ -52,7 +52,7 @@ class RecordRepositoryTest {
         record.setLesson(savedLesson);
 
         // When
-        Record savedRecord = recordRepository.save(record);
+        Record savedRecord = recordRepository.saveAndFlush(record);
 
         // Then
         assertThat(savedRecord.getId()).isNotNull();
@@ -88,12 +88,12 @@ class RecordRepositoryTest {
         Record record1 = new Record();
         record1.setUser(savedUser);
         record1.setLesson(savedLesson1);
-        recordRepository.save(record1);
+        recordRepository.saveAndFlush(record1);
 
         Record record2 = new Record();
         record2.setUser(savedUser);
         record2.setLesson(savedLesson2);
-        recordRepository.save(record2);
+        recordRepository.saveAndFlush(record2);
 
         // When
         List<Record> records = recordRepository.findAllByUserWithLessons(savedUser);

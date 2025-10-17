@@ -54,16 +54,22 @@ class RecordControllerTest {
     @Test
     void shouldGetRecordById() throws Exception {
         // Given
-        UUID id = UUID.randomUUID();
+        UUID id = UUID.fromString("550e8400-e29b-41d4-a716-446655440020");
         RecordDTO recordDTO = new RecordDTO();
+        recordDTO.setId(id);
         recordDTO.setDate(LocalDateTime.now());
+        recordDTO.setUser(UUID.fromString("550e8400-e29b-41d4-a716-446655440021"));
+        recordDTO.setLesson(UUID.fromString("550e8400-e29b-41d4-a716-446655440022"));
 
         when(recordService.getRecordById(id)).thenReturn(Optional.of(recordDTO));
 
         // When & Then
         mockMvc.perform(get("/record/{id}", id))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.date").exists());
+                .andExpect(jsonPath("$.id").value(id.toString()))
+                .andExpect(jsonPath("$.date").exists())
+                .andExpect(jsonPath("$.user").value("550e8400-e29b-41d4-a716-446655440021"))
+                .andExpect(jsonPath("$.lesson").value("550e8400-e29b-41d4-a716-446655440022"));
     }
 
     @Test
@@ -126,7 +132,7 @@ class RecordControllerTest {
         RecordDTO updatedRecord = new RecordDTO();
         updatedRecord.setDate(LocalDateTime.now());
 
-        when(recordService.updateRecord(id, updateDTO)).thenReturn(Optional.of(updatedRecord));
+        when(recordService.updateRecord(eq(id), any(RecordDTO.class))).thenReturn(Optional.of(updatedRecord));
 
         // When & Then
         mockMvc.perform(put("/record/{id}", id)

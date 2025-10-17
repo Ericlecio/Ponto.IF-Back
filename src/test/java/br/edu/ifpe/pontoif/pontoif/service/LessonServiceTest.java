@@ -65,8 +65,9 @@ class LessonServiceTest {
     @Test
     void shouldGetLessonById() {
         // Given
-        UUID id = UUID.randomUUID();
+        UUID id = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
         Lesson lesson = new Lesson();
+        lesson.setId(id);
         lesson.setDayOfWeek(DayOfWeek.TUESDAY);
         lesson.setStartTime(LocalTime.of(14, 0));
         lesson.setEndTime(LocalTime.of(16, 0));
@@ -126,8 +127,9 @@ class LessonServiceTest {
     @Test
     void shouldUpdateLesson() {
         // Given
-        UUID id = UUID.randomUUID();
+        UUID id = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
         Lesson existing = new Lesson();
+        existing.setId(id);
         existing.setDayOfWeek(DayOfWeek.MONDAY);
         existing.setStartTime(LocalTime.of(8, 0));
         existing.setEndTime(LocalTime.of(10, 0));
@@ -138,6 +140,7 @@ class LessonServiceTest {
         updateDTO.setEndTime(LocalTime.of(18, 0));
 
         Lesson updated = new Lesson();
+        updated.setId(id);
         updated.setDayOfWeek(DayOfWeek.FRIDAY);
         updated.setStartTime(LocalTime.of(16, 0));
         updated.setEndTime(LocalTime.of(18, 0));
@@ -163,8 +166,9 @@ class LessonServiceTest {
     @Test
     void shouldDeleteLesson() {
         // Given
-        UUID id = UUID.randomUUID();
+        UUID id = UUID.fromString("550e8400-e29b-41d4-a716-446655440003");
         Lesson lesson = new Lesson();
+        lesson.setId(id);
         lesson.setDayOfWeek(DayOfWeek.THURSDAY);
 
         when(lessonRepository.findById(id)).thenReturn(Optional.of(lesson));
@@ -181,6 +185,7 @@ class LessonServiceTest {
     void shouldGetCurrentLesson() {
         // Given
         User user = new User();
+        user.setId(UUID.fromString("550e8400-e29b-41d4-a716-446655440004"));
         user.setName("Test User");
         user.setEmail("test@example.com");
         user.setRegistration("12345");
@@ -189,11 +194,13 @@ class LessonServiceTest {
         user.setRole(Role.STUDENT);
 
         Lesson lesson = new Lesson();
+        lesson.setId(UUID.fromString("550e8400-e29b-41d4-a716-446655440005"));
         lesson.setDayOfWeek(DayOfWeek.MONDAY);
         lesson.setStartTime(LocalTime.of(8, 0));
         lesson.setEndTime(LocalTime.of(10, 0));
 
         Record record = new Record();
+        record.setId(UUID.fromString("550e8400-e29b-41d4-a716-446655440006"));
         record.setLesson(lesson);
 
         when(recordService.getRecordsByUser(user)).thenReturn(List.of(record));

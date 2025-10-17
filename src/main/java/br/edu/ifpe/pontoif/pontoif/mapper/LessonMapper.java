@@ -19,5 +19,7 @@ public interface LessonMapper {
     LessonDTO toDTO(Lesson entity);
 
     Lesson fromId(UUID id);
-    UUID toId(Lesson lesson);
+    default UUID toId(Lesson lesson) {
+        return lesson != null ? lesson.getId() : null;
+    }
 }

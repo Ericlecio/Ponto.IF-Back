@@ -3,15 +3,18 @@ package br.edu.ifpe.pontoif.pontoif.mapper;
 import br.edu.ifpe.pontoif.pontoif.dto.ClassroomDTO;
 import br.edu.ifpe.pontoif.pontoif.entity.Classroom;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SpringBootTest
 class ClassroomMapperTest {
 
-    private final ClassroomMapper classroomMapper = Mappers.getMapper(ClassroomMapper.class);
+    @Autowired
+    private ClassroomMapper classroomMapper;
 
     @Test
     void shouldMapClassroomDTOToEntity() {

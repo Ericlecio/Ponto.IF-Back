@@ -54,7 +54,6 @@ class BiometricControllerTest {
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(biometricsDTO)))
-
                 .andExpect(status().isCreated());
 
         verify(biometricService, times(1)).insertBiometric(any(BiometricsDTO.class));
@@ -102,7 +101,7 @@ class BiometricControllerTest {
         Biometric biometric = new Biometric();
         biometric.setId(222222222L);
         var user = User.builder()
-                .id(UUID.randomUUID())
+                .id(UUID.fromString("550e8400-e29b-41d4-a716-446655440007"))
                 .name("Test User")
                 .email("teste@email.com")
                 .role(Role.STUDENT)
@@ -111,7 +110,7 @@ class BiometricControllerTest {
         biometric.setRecords(new ArrayList<>());
         biometric.setCreatedAt(LocalDateTime.now());
 
-        when(biometricService.matchSample(sampleDTO)).thenReturn(Optional.of(biometric));
+        when(biometricService.matchSample(any(BiometricSampleDTO.class))).thenReturn(Optional.of(biometric));
 
         // When & Then
         mockMvc.perform(post("/biometric/sample")
@@ -137,5 +136,24 @@ class BiometricControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(biometricService, times(1)).matchSample(any(BiometricSampleDTO.class));
+    }
+
+    @Test
+    void shouldGetBiometricById() throws Exception {
+        // Given
+        Long id = 123456789L;
+        BiometricsDTO biometricsDTO = new BiometricsDTO();
+        biometricsDTO.setId(id);
+        biometricsDTO.setUser(UUID.fromString("550e8400-e29b-41d4-a716-446655440008"));
+
+        when(biometricService.getBiometricById(id)).thenReturn(Optional.of(biometricsDTO));
+
+        // When & Then
+        mockMvc.perform(get("/biometric/{id}", id))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.user").value("550e8400-e29b-41d4-a716-446655440008"));
+
+        verify(biometricService, times(1)).getBiometricById(id);
     }
 }

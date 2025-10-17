@@ -2,6 +2,9 @@ package br.edu.ifpe.pontoif.pontoif.mapper;
 
 import br.edu.ifpe.pontoif.pontoif.dto.DisciplineDTO;
 import br.edu.ifpe.pontoif.pontoif.entity.Discipline;
+
+import java.util.UUID;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -16,6 +19,8 @@ public interface DisciplineMapper {
     @Mapping(target = "lessons", source = "lessons")
     DisciplineDTO toDTO(Discipline entity);
 
-    Discipline fromId(java.util.UUID id);
-    java.util.UUID toId(Discipline discipline);
+    Discipline fromId(UUID id);
+    default UUID toId(Discipline discipline) {
+        return discipline != null ? discipline.getId() : null;
+    }
 }

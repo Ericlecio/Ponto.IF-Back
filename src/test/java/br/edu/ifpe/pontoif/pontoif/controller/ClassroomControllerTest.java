@@ -53,8 +53,9 @@ class ClassroomControllerTest {
     @Test
     void shouldGetClassroomById() throws Exception {
         // Given
-        UUID id = UUID.randomUUID();
+        UUID id = UUID.fromString("550e8400-e29b-41d4-a716-446655440008");
         ClassroomDTO classroomDTO = new ClassroomDTO();
+        classroomDTO.setId(id);
         classroomDTO.setCode("SI-2024-2");
 
         when(classroomService.getClassroomById(id)).thenReturn(Optional.of(classroomDTO));
@@ -62,13 +63,14 @@ class ClassroomControllerTest {
         // When & Then
         mockMvc.perform(get("/classroom/{id}", id))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id.toString()))
                 .andExpect(jsonPath("$.code").value("SI-2024-2"));
     }
 
     @Test
     void shouldReturnNotFoundWhenClassroomNotExists() throws Exception {
         // Given
-        UUID id = UUID.randomUUID();
+        UUID id = UUID.fromString("550e8400-e29b-41d4-a716-446655440009");
         when(classroomService.getClassroomById(id)).thenReturn(Optional.empty());
 
         // When & Then
@@ -98,7 +100,7 @@ class ClassroomControllerTest {
     @Test
     void shouldDeleteClassroom() throws Exception {
         // Given
-        UUID id = UUID.randomUUID();
+        UUID id = UUID.fromString("550e8400-e29b-41d4-a716-446655440010");
         when(classroomService.deleteClassroom(id)).thenReturn(true);
 
         // When & Then
@@ -111,7 +113,7 @@ class ClassroomControllerTest {
     @Test
     void shouldReturnNotFoundWhenDeletingNonExistentClassroom() throws Exception {
         // Given
-        UUID id = UUID.randomUUID();
+        UUID id = UUID.fromString("550e8400-e29b-41d4-a716-446655440011");
         when(classroomService.deleteClassroom(id)).thenReturn(false);
 
         // When & Then

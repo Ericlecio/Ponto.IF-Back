@@ -37,7 +37,7 @@ class BiometricRepositoryTest {
         biometric.setUser(savedUser);
 
         // When
-        Biometric savedBiometric = biometricRepository.save(biometric);
+        Biometric savedBiometric = biometricRepository.saveAndFlush(biometric);
 
         // Then
         assertThat(savedBiometric.getId()).isEqualTo(123456789L);
@@ -61,7 +61,7 @@ class BiometricRepositoryTest {
         Biometric biometric = new Biometric();
         biometric.setId(biometricId);
         biometric.setUser(savedUser);
-        biometricRepository.save(biometric);
+        biometricRepository.saveAndFlush(biometric);
 
         // When
         Biometric foundBiometric = biometricRepository.findById(biometricId).orElse(null);
