@@ -42,6 +42,20 @@ public class BiometricController {
     }
 
     @Operation(
+            summary = "Get biometric by ID",
+            description = "Retrieve a biometric by its ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Biometric found"),
+                    @ApiResponse(responseCode = "404", description = "Biometric not found")
+            }
+    )
+    @GetMapping("/{id}")
+    public ResponseEntity<BiometricsDTO> getBiometricById(@PathVariable Long id) {
+        return biometricService.getBiometricById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+    @Operation(
             summary = "Delete a biometric",
             description = "Deletes biometric by its a ID",
             responses = {
@@ -71,4 +85,6 @@ public class BiometricController {
                 ? ResponseEntity.ok().build()
                 : ResponseEntity.notFound().build();
     }
+
+    
 }

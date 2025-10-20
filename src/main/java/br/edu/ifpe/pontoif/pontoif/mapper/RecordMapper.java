@@ -20,5 +20,7 @@ public interface RecordMapper {
     RecordDTO toDTO(Record record);
 
     Record fromId(UUID id);
-    UUID toId(Record record);
+    default UUID toId(Record record) {
+        return record != null ? record.getId() : null;
+    }
 }

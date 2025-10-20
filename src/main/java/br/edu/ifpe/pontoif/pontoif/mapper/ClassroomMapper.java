@@ -15,7 +15,6 @@ public interface ClassroomMapper {
 
     Classroom toEntity(ClassroomDTO classroomDTO);
 
-    @Mapping(target = "courseId", source = "course.id")
     ClassroomDTO toDTO(Classroom classroom);
 
 
