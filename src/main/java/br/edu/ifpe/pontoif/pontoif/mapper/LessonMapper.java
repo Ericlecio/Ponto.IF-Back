@@ -10,6 +10,7 @@ import java.util.UUID;
 @Mapper(componentModel = "spring", uses = { RecordMapper.class })
 public interface LessonMapper {
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "discipline.id", source = "discipline")
     @Mapping(target = "records", source = "records")
     Lesson toEntity(LessonDTO dto);
