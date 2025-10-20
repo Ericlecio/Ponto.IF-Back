@@ -20,6 +20,9 @@ target/
 *.ipr
 
 ## environment ###
+*.env
+*.local
+.env.*.local
 .env
 .env.local
 .env.*.local
