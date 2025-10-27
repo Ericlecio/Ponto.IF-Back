@@ -15,6 +15,7 @@ public interface BiometricMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user.id", source = "user")
+    @Mapping(target = "template", ignore = true)
     Biometric toEntity(BiometricDTO dto);
 
     @Mapping(target = "user", source = "user.id")
