@@ -26,7 +26,7 @@ public class CourseUpdate {
         course.setAcronym(message.getAcronym());
         course.setEndTime(message.getEndTime());
         course.setStartTime(message.getStartTime());
-        course.setDurationInMonths(message.getDuration());
+        course.setDurationInMonths(message.getDurationInMonths());
         courseRepository.save(course);
     }
 }

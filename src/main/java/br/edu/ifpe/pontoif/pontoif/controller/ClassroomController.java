@@ -67,20 +67,6 @@ public class ClassroomController {
     }
 
     @Operation(
-            summary = "Delete a classroom",
-            description = "Deletes a classroom by its UUID",
-            responses = {
-                    @ApiResponse(responseCode = "204", description = "Deleted successfully"),
-                    @ApiResponse(responseCode = "404", description = "Classroom not found")
-            }
-    )
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteClassroom(@PathVariable UUID id) {
-        boolean deleted = classroomService.deleteClassroom(id);
-        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
-    }
-
-    @Operation(
             summary = "List all course IDs",
             description = "Recover all classroom subjects",
             responses = {
@@ -94,9 +80,8 @@ public class ClassroomController {
         return ResponseEntity.ok(disciplineIds);
     }
 
-
     @Operation(
-            summary = "Update a classroom",
+            summary = "Update a classroom by its id",
             description = "Updates an existing classroom by its UUID. Any null fields in the request will be ignored.",
             responses = {
                     @ApiResponse(
@@ -117,4 +102,18 @@ public class ClassroomController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @Operation(
+            summary = "Delete a classroom",
+            description = "Deletes a classroom by its UUID",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "Deleted successfully"),
+                    @ApiResponse(responseCode = "404", description = "Classroom not found")
+            }
+    )
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteClassroom(@PathVariable UUID id) {
+        return classroomService.deleteClassroom(id)
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
+    }
 }

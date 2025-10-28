@@ -4,59 +4,54 @@ import br.edu.ifpe.pontoif.pontoif.dto.ClassroomDTO;
 import br.edu.ifpe.pontoif.pontoif.entity.Classroom;
 import br.edu.ifpe.pontoif.pontoif.entity.Course;
 import br.edu.ifpe.pontoif.pontoif.entity.Discipline;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = { CourseMapper.class, DisciplineMapper.class })
 public interface ClassroomMapper {
 
-    Classroom toEntity(ClassroomDTO classroomDTO);
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "course.id", source = "course")
+    @Mapping(target = "disciplines", source = "disciplines")
+    Classroom toEntity(ClassroomDTO dto);
 
-    ClassroomDTO toDTO(Classroom classroom);
+    @Mapping(target = "course", source = "course.id")
+    @Mapping(target = "disciplines", source = "disciplines")
+    ClassroomDTO toDTO(Classroom entity);
 
-
-    @Named("mapIdToCourse")
-    default Course mapIdToCourse(UUID id) {
+    default Course fromId(UUID id) {
         if (id == null) return null;
-        Course course = new Course();
-        course.setId(id);
-        return course;
+        Course c = new Course();
+        c.setId(id);
+        return c;
     }
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateEntityFromDto(ClassroomDTO classroomDTO, @MappingTarget Classroom classroom);
+    default UUID toId(Course course) {
+        return course != null ? course.getId() : null;
+    }
 
-    default Classroom fromId(UUID id) {
+    default Discipline fromDisciplineId(UUID id) {
         if (id == null) return null;
-        Classroom classroom = new Classroom();
-        classroom.setId(id);
-        return classroom;
+        Discipline d = new Discipline();
+        d.setId(id);
+        return d;
     }
 
-    default UUID toId(Classroom classroom) {
-        return classroom != null ? classroom.getId() : null;
+    default UUID toId(Discipline d) {
+        return d != null ? d.getId() : null;
     }
 
-
-    @Named("mapIdsToDisciplines")
-    default List<Discipline> mapIdsToDisciplines(List<UUID> ids) {
-        if (ids == null) return null;
-        return ids.stream().map(id -> {
-            Discipline discipline = new Discipline();
-            discipline.setId(id);
-            return discipline;
-        }).collect(Collectors.toList());
+    default List<UUID> toIdList(List<Discipline> list) {
+        if (list == null) return null;
+        return list.stream().map(this::toId).filter(Objects::nonNull).toList();
     }
 
-
-    @Named("mapDisciplinesToIds")
-    default List<UUID> mapDisciplinesToIds(List<Discipline> disciplines) {
-        if (disciplines == null) return null;
-        return disciplines.stream()
-                .map(Discipline::getId)
-                .collect(Collectors.toList());
+    default List<Discipline> fromIdList(List<UUID> list) {
+        if (list == null) return null;
+        return list.stream().map(this::fromDisciplineId).toList();
     }
 }

@@ -6,13 +6,17 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "biometrics")
 @Data
 public class Biometric {
     @Id
-    private Long id; //ID do sensor
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    private byte[] template;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
