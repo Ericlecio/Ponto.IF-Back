@@ -1,7 +1,7 @@
 package br.edu.ifpe.pontoif.pontoif.controller;
 
+import br.edu.ifpe.pontoif.pontoif.dto.BiometricDTO;
 import br.edu.ifpe.pontoif.pontoif.dto.BiometricSampleDTO;
-import br.edu.ifpe.pontoif.pontoif.dto.BiometricsDTO;
 import br.edu.ifpe.pontoif.pontoif.service.BiometricService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,10 +14,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/biometric")
 @RequiredArgsConstructor
-@Tag(name = "Biometric management", description = "API to manege biometrics")
+@Tag(name = "Biometric management", description = "API to manage biometrics")
 public class BiometricController {
 
     private final BiometricService biometricService;
@@ -26,18 +29,13 @@ public class BiometricController {
             summary = "Register a new biometric",
             description = "Endpoint responsible for adding a new biometric",
             responses = {
-                    @ApiResponse(
-                            responseCode = "201",
-                            description = "Created",
-                            content = @Content (
-                                    schema = @Schema(hidden = true)
-                            )
-                    )
+                    @ApiResponse(responseCode = "201", description = "Created successfully",
+                            content = @Content(schema = @Schema(hidden = true)))
             }
     )
-    @PostMapping("")
-    public ResponseEntity<Void> registerNewBiometric(@Valid @RequestBody BiometricsDTO biometricsDTO) {
-        biometricService.insertBiometric(biometricsDTO);
+    @PostMapping
+    public ResponseEntity<Void> createBiometric(@Valid @RequestBody BiometricDTO biometricDTO) {
+        biometricService.insertBiometric(biometricDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -50,41 +48,52 @@ public class BiometricController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<BiometricsDTO> getBiometricById(@PathVariable Long id) {
-        return biometricService.getBiometricById(id)
-                .map(ResponseEntity::ok)
+    public ResponseEntity<BiometricDTO> getBiometricById(@PathVariable Long id) {
+        Optional<BiometricDTO> biometric = biometricService.getBiometricById(id);
+        return biometric.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
     @Operation(
-            summary = "Delete a biometric",
-            description = "Deletes biometric by its a ID",
+            summary = "List all biometrics",
+            description = "Retrieve all biometrics from the system",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Biometric deleted successfully"),
-                    @ApiResponse(responseCode = "404", description = "Biometric not found")
+                    @ApiResponse(responseCode = "200", description = "List retrieved successfully")
             }
     )
-    @DeleteMapping
-    public ResponseEntity<Void> deleteBiometric(@RequestParam Long id) {
-        return biometricService.deleteBiometric(id)
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
+    @GetMapping
+    public ResponseEntity<List<BiometricDTO>> getAllBiometrics() {
+        List<BiometricDTO> biometrics = biometricService.getAllBiometrics();
+        return ResponseEntity.ok(biometrics);
     }
 
     @Operation(
             summary = "Send fingerprint sample",
-            description = "Send sample to match",
+            description = "Send a fingerprint sample to match against registered biometrics",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Biometric match successfully"),
-                    @ApiResponse(responseCode = "404", description = "Sample does not match the biometrics in the system")
+                    @ApiResponse(responseCode = "200", description = "Biometric matched successfully"),
+                    @ApiResponse(responseCode = "404", description = "No biometric match found")
             }
     )
     @PostMapping("/sample")
     public ResponseEntity<Void> matchSample(@Valid @RequestBody BiometricSampleDTO biometricSampleDTO) {
-        return biometricService.matchSample(biometricSampleDTO)
-                .isPresent()
+        return biometricService.matchSample(biometricSampleDTO).isPresent()
                 ? ResponseEntity.ok().build()
                 : ResponseEntity.notFound().build();
     }
 
-    
+    @Operation(
+            summary = "Delete a biometric",
+            description = "Deletes a biometric by its ID",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "Deleted successfully"),
+                    @ApiResponse(responseCode = "404", description = "Biometric not found")
+            }
+    )
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBiometric(@PathVariable Long id) {
+        return biometricService.deleteBiometric(id)
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
+    }
 }

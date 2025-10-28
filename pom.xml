@@ -110,7 +110,12 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>com.machinezoo.sourceafis</groupId>
+            <artifactId>sourceafis</artifactId>
+            <version>3.18.1</version>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<plugins>

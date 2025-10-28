@@ -45,10 +45,11 @@ public class DataMockLoader {
         user.setName("Maria dos Santos");
         user.setEmail("maria.santos@ifpe.edu.br");
         user.setRegistration("IFPE2025A01");
+        user.setRole(Role.STUDENT);
+        user.setIsActive(true);
         userRepository.save(user);
 
         Biometric biometric = new Biometric();
-        biometric.setId(1L);
         biometric.setUser(user);
         biometricRepository.save(biometric);
 
@@ -74,7 +75,7 @@ public class DataMockLoader {
         Lesson lesson = new Lesson();
         lesson.setDayOfWeek(DayOfWeek.MONDAY);
         lesson.setStartTime(LocalTime.of(8, 0));          // 08:00
-        lesson.setEndTime(LocalTime.of(9, 40));           // 09:40
+        lesson.setEndTime(LocalTime.of(2, 40));           // 09:40
         lesson.setDiscipline(discipline);
         lessonRepository.save(lesson);
 
@@ -85,6 +86,7 @@ public class DataMockLoader {
         recordRepository.save(record);
 
         log.info("Dados mockados inseridos com sucesso!");
-    }
 
+        System.out.println("userID:" + user.toString());
+    }
 }
