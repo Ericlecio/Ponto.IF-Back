@@ -1,74 +1,100 @@
 package br.edu.ifpe.pontoif.pontoif.service;
 
-import br.edu.ifpe.pontoif.pontoif.dto.BiometricSampleDTO;
-import br.edu.ifpe.pontoif.pontoif.dto.BiometricsDTO;
-import br.edu.ifpe.pontoif.pontoif.dto.RecordDTO;
-import br.edu.ifpe.pontoif.pontoif.entity.Biometric;
-import br.edu.ifpe.pontoif.pontoif.entity.Lesson;
+import br.edu.ifpe.pontoif.pontoif.dto.*;
+import br.edu.ifpe.pontoif.pontoif.entity.*;
 import br.edu.ifpe.pontoif.pontoif.mapper.BiometricMapper;
 import br.edu.ifpe.pontoif.pontoif.repository.BiometricRepository;
+import br.edu.ifpe.pontoif.pontoif.service.match.BiometricMatchService;
+import com.machinezoo.sourceafis.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import java.util.*;
 
-import java.util.List;
-import java.util.Optional;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BiometricService {
-    //TODO: Verificar se precisa de update
 
     private final BiometricRepository biometricRepository;
     private final BiometricMapper biometricMapper;
-
+    private final BiometricMatchService biometricMatchService;
     private final RecordService recordService;
-
     private final LessonService lessonService;
 
     @Transactional
-    public void insertBiometric(final BiometricsDTO biometricsDTO) {
-        biometricRepository.save(biometricMapper.toEntity(biometricsDTO));
-    }
+    public void insertBiometric(final BiometricDTO biometricDTO) {
+        try {
+            if (biometricDTO.getImage() == null || biometricDTO.getImage().length == 0) {
+                throw new IllegalArgumentException("Missing biometric image.");
+            }
 
-    public Optional<BiometricsDTO> getBiometricById(final Long id) {
-        return biometricRepository.findById(id).map(biometricMapper::toDTO);
-    }
+            FingerprintTemplate tpl = new FingerprintTemplate(
+                    new FingerprintImage(biometricDTO.getImage())
+            );
+            byte[] serialized = tpl.toByteArray();
 
-    public List<BiometricsDTO> getAllBiometrics(Long id) {
-        return biometricRepository.findAll()
-                .stream()
-                .map(biometricMapper::toDTO)
-                .toList();
+            Biometric entity = biometricMapper.toEntity(biometricDTO);
+            entity.setTemplate(serialized);
+
+            biometricRepository.save(entity);
+            log.info("Template saved successfully  ({} bytes)", serialized.length);
+
+        } catch (Exception e) {
+            log.error("Error converting image to template : {}", e.getMessage(), e);
+            throw e;
+        }
     }
 
     @Transactional
-    public boolean deleteBiometric(final Long id) {
-        return biometricRepository.findById(id).map(biometric -> {
-            biometricRepository.delete(biometric);
-            return true;
-        }).orElse(false);
+    public Optional<Biometric> matchSample(final BiometricSampleDTO dto) {
+        try {
+            if (dto.getImage() == null || dto.getImage().length == 0) {
+                throw new IllegalArgumentException("Missing biometric image.");
+            }
+
+            FingerprintTemplate sampleTemplate = new FingerprintTemplate(
+                    new FingerprintImage(dto.getImage())
+            );
+
+            return biometricMatchService.findBestMatch(sampleTemplate.toByteArray())
+                    .map(this::processMatchedBiometric);
+
+        } catch (Exception e) {
+            log.error("Error generating SourceAFIS template from image: {}", e.getMessage(), e);
+            return Optional.empty();
+        }
     }
 
-    @Transactional
-    public Optional<Biometric> matchSample(final BiometricSampleDTO biometricSampleDTO) {
-        //TODO: Verificar qual método de mach que sera utilizado pelo sistema, atualmente apenas ID
-        return biometricRepository.findById(biometricSampleDTO.getId())
-                .flatMap(this::processMatchedBiometric);
-    }
-
-    private Optional<Biometric> processMatchedBiometric(final Biometric biometric) {
+    private Biometric processMatchedBiometric(Biometric biometric) {
         lessonService.getCurrentLesson(biometric.getUser())
                 .ifPresent(lesson ->
-                        recordService.insertRecord(createRecordDTO(biometric, lesson)
-                ));
-        return Optional.of(biometric);
+                        recordService.insertRecord(createRecordDTO(biometric, lesson)));
+        return biometric;
     }
 
-    private RecordDTO createRecordDTO(final Biometric biometric, final Lesson lesson) {
+    private RecordDTO createRecordDTO(Biometric biometric, Lesson lesson) {
         RecordDTO dto = new RecordDTO();
         dto.setUser(biometric.getUser().getId());
         dto.setLesson(lesson.getId());
         return dto;
+    }
+
+    public List<BiometricDTO> getAllBiometrics() {
+        return biometricRepository.findAll().stream()
+                .map(biometricMapper::toDTO)
+                .toList();
+    }
+
+    public Optional<BiometricDTO> getBiometricById(final Long id) {
+        return biometricRepository.findById(id).map(biometricMapper::toDTO);
+    }
+
+    @Transactional
+    public boolean deleteBiometric(final Long id) {
+        return biometricRepository.findById(id)
+                .map(b -> { biometricRepository.delete(b); return true; })
+                .orElse(false);
     }
 }

@@ -7,7 +7,8 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class BiometricsDTO {
-    private Long id;
+public class BiometricDTO {
+    private UUID id;
+    private byte[] image;
     private UUID user;
 }
