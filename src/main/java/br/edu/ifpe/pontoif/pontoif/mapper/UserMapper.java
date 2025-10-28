@@ -15,7 +15,7 @@ public interface UserMapper {
     @Mapping(target = "id", ignore = true)
     User toEntity(UserDTO dto);
 
-    UserDTO toDTO(User entity);
+    UserDTO toDTO(User user);
 
     default User fromId(UUID id) {
         if (id == null) return null;
