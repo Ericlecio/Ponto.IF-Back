@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,4 +21,6 @@ public interface RecordRepository extends JpaRepository<Record, UUID> {
                 WHERE r.user = :user
             """)
     List<Record> findAllByUserWithLessons(@Param("user") User user);
+
+    List<Record> findByDateBetweenAndLessonDisciplineId(LocalDateTime start, LocalDateTime end, UUID disciplineId);
 }

@@ -1,6 +1,7 @@
 package br.edu.ifpe.pontoif.pontoif.controller;
 
 import br.edu.ifpe.pontoif.pontoif.dto.DisciplineDTO;
+import br.edu.ifpe.pontoif.pontoif.dto.TeacherDTO;
 import br.edu.ifpe.pontoif.pontoif.service.DisciplineService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -39,6 +40,23 @@ public class DisciplineController {
     @PostMapping("")
     public ResponseEntity<Void> createDiscipline (@Valid @RequestBody DisciplineDTO disciplineDTO) {
         disciplineService.insertDiscipline(disciplineDTO);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @Operation(
+            summary = "insert teacher in discipline",
+            description = "Endpoint responsible for adding a teacher in discipline",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Created successfully",
+                            content = @Content (schema = @Schema(hidden = true))
+                    )
+            }
+    )
+    @PostMapping("/insert-teacher/{id}")
+    public ResponseEntity<Void> insertTeach(@Valid @RequestBody TeacherDTO teacherDTO, @PathVariable UUID id) {
+        disciplineService.insertTeacher(teacherDTO, id);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
