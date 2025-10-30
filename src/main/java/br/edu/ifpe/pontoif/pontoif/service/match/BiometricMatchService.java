@@ -21,13 +21,23 @@ public class BiometricMatchService {
     public Optional<Biometric> findBestMatch(byte[] sampleTemplate) {
         List<Biometric> all = biometricRepository.findAll();
 
-        return all.stream()
+        return getBiometric(sampleTemplate, all);
+    }
+
+    private record MatchResult(Biometric biometric, double score) {}
+
+    public Optional<Biometric> findTeacherMatch(byte[] sampleTemplate) {
+        List<Biometric> allTeacher = biometricRepository.findAllByUser_Role("TEACHER");
+
+        return getBiometric(sampleTemplate, allTeacher);
+    }
+
+    private Optional<Biometric> getBiometric(byte[] sampleTemplate, List<Biometric> allTeacher) {
+        return allTeacher.stream()
                 .filter(b -> b.getTemplate() != null && b.getTemplate().length > 0)
                 .map(b -> new MatchResult(b, matchService.calculateScore(b.getTemplate(), sampleTemplate)))
                 .max(Comparator.comparingDouble(MatchResult::score))
                 .filter(r -> r.score() >= 40.0)
                 .map(MatchResult::biometric);
     }
-
-    private record MatchResult(Biometric biometric, double score) {}
 }
