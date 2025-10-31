@@ -73,6 +73,7 @@ public class DataMockLoader {
         disciplineRepository.save(discipline);
 
         Lesson lesson = new Lesson();
+        lesson.setIsActive(true);
         lesson.setDayOfWeek(DayOfWeek.MONDAY);
         lesson.setStartTime(LocalTime.of(8, 0));          // 08:00
         lesson.setEndTime(LocalTime.of(2, 40));           // 09:40

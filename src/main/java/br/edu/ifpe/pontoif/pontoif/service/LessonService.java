@@ -70,15 +70,20 @@ public class LessonService {
 
     public Optional<Lesson> getCurrentLesson(User user) {
         //TODO verificar método de coleta de data e hora
-        DayOfWeek today = LocalDate.now().getDayOfWeek();
-        LocalTime now = LocalTime.now();
+//        DayOfWeek today = LocalDate.now().getDayOfWeek();
+//        LocalTime now = LocalTime.now();
+//
+//        return recordService.getRecordsByUser(user).stream()
+//                .map(Record::getLesson)
+//                .map(lesson -> lessonRepository.findIfActive(lesson.getId(), today, now))
+//                .filter(Optional::isPresent)
+//                .map(Optional::get)
+//                .findFirst();
 
-        return recordService.getRecordsByUser(user).stream()
-                .map(Record::getLesson)
-                .map(lesson -> lessonRepository.findIfActive(lesson.getId(), today, now))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+        return lessonRepository
+                .findAll()
+                .stream()
+                .filter(Lesson::getIsActive)
                 .findFirst();
     }
-
 }

@@ -5,7 +5,6 @@ import br.edu.ifpe.pontoif.pontoif.dto.DisciplineDTO;
 import br.edu.ifpe.pontoif.pontoif.dto.ListPresentDTO;
 import br.edu.ifpe.pontoif.pontoif.dto.UserDTO;
 import br.edu.ifpe.pontoif.pontoif.dto.UserReportDTO;
-import br.edu.ifpe.pontoif.pontoif.entity.Discipline;
 import br.edu.ifpe.pontoif.pontoif.entity.User;
 import br.edu.ifpe.pontoif.pontoif.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
