@@ -181,7 +181,6 @@ class LessonServiceTest {
         assertThat(result).isTrue();
         verify(lessonRepository, times(1)).delete(lesson);
     }
-
     @Test
     void shouldGetCurrentLesson() {
         // Given
@@ -194,26 +193,28 @@ class LessonServiceTest {
         user.setType("STUDENT");
         user.setRole(Role.STUDENT);
 
-        Lesson lesson = new Lesson();
-        lesson.setId(UUID.fromString("550e8400-e29b-41d4-a716-446655440005"));
-        lesson.setDayOfWeek(DayOfWeek.MONDAY);
-        lesson.setIsActive(true);
-        lesson.setStartTime(LocalTime.of(8, 0));
-        lesson.setEndTime(LocalTime.of(10, 0));
+        Lesson activeLesson = new Lesson();
+        activeLesson.setId(UUID.fromString("550e8400-e29b-41d4-a716-446655440005"));
+        activeLesson.setDayOfWeek(DayOfWeek.MONDAY);
+        activeLesson.setIsActive(true);
+        activeLesson.setStartTime(LocalTime.of(8, 0));
+        activeLesson.setEndTime(LocalTime.of(10, 0));
 
-        Record record = new Record();
-        record.setId(UUID.fromString("550e8400-e29b-41d4-a716-446655440006"));
-        record.setLesson(lesson);
+        Lesson inactiveLesson = new Lesson();
+        inactiveLesson.setId(UUID.fromString("550e8400-e29b-41d4-a716-446655440007"));
+        inactiveLesson.setDayOfWeek(DayOfWeek.TUESDAY);
+        inactiveLesson.setIsActive(false);
 
-        when(recordService.getRecordsByUser(user)).thenReturn(List.of(record));
-        when(lessonRepository.findIfActive(any(UUID.class), any(DayOfWeek.class), any(LocalTime.class)))
-                .thenReturn(Optional.of(lesson));
+        // o método só usa findAll(), então apenas mockamos isso
+        when(lessonRepository.findAll()).thenReturn(List.of(inactiveLesson, activeLesson));
 
         // When
         Optional<Lesson> result = lessonService.getCurrentLesson(user);
 
         // Then
         assertThat(result).isPresent();
+        assertThat(result.get().getIsActive()).isTrue();
         assertThat(result.get().getDayOfWeek()).isEqualTo(DayOfWeek.MONDAY);
+        verify(lessonRepository, times(1)).findAll();
     }
 }
