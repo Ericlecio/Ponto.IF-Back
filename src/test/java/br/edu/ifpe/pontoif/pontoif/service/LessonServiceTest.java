@@ -169,6 +169,7 @@ class LessonServiceTest {
         UUID id = UUID.fromString("550e8400-e29b-41d4-a716-446655440003");
         Lesson lesson = new Lesson();
         lesson.setId(id);
+        lesson.setIsActive(true);
         lesson.setDayOfWeek(DayOfWeek.THURSDAY);
 
         when(lessonRepository.findById(id)).thenReturn(Optional.of(lesson));
