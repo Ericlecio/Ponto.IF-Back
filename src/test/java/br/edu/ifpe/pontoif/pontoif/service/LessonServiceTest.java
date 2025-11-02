@@ -197,6 +197,7 @@ class LessonServiceTest {
         Lesson lesson = new Lesson();
         lesson.setId(UUID.fromString("550e8400-e29b-41d4-a716-446655440005"));
         lesson.setDayOfWeek(DayOfWeek.MONDAY);
+        lesson.setIsActive(true);
         lesson.setStartTime(LocalTime.of(8, 0));
         lesson.setEndTime(LocalTime.of(10, 0));
 
