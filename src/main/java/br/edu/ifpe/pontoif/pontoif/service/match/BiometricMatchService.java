@@ -30,7 +30,7 @@ public class BiometricMatchService {
         return candidates.stream()
                 .filter(b -> b.getTemplate() != null && b.getUser() != null)
                 .map(b -> new MatchResult(b, afisMatchService.calculateScore(b.getTemplate(), sampleTemplate)))
-                .filter(r -> r.score() > 0)
+                .filter(r -> r.score() > 50)
                 .max(Comparator.comparingDouble(MatchResult::score))
                 .map(best -> {
                     log.info("🔎 Best match for role {} → user={} (score={})",
