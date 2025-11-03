@@ -23,14 +23,16 @@ jobs:
       - name: Compile and install dependencies
         run: mvn -B clean install -DskipTests
 
-#     - name: Run tests
-#       run: mvn -B test
+      # Os testes estão desativados temporariamente
+      # - name: Run tests
+      #   run: mvn -B test
 
-#      - name: Build package
-#       run: mvn -B package -DskipTests
+      - name: Build package
+        run: mvn -B package -DskipTests
 
-      - name: Create test summary
-        uses: test-summary/action@v1
-        with:
-          paths: target/surefire-reports/**/*.xml
-        if: always()
+      # O relatório de testes foi removido porque os testes estão desativados
+      # - name: Create test summary
+      #   uses: test-summary/action@v1
+      #   with:
+      #     paths: target/surefire-reports/**/*.xml
+      #   if: always()
