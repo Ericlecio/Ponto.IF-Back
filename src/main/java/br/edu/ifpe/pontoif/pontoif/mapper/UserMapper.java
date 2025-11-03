@@ -14,8 +14,8 @@ public interface UserMapper {
 
     @Mapping(target = "biometrics", ignore = true)
     @Mapping(target = "isActive", ignore = true)
-    @Mapping(target = "correlationId", ignore = true)
     @Mapping(target = "type", ignore = true)
+    @Mapping(target = "correlationId", source = "id")
     User toEntity(UserDTO dto);
 
     UserDTO toDTO(User user);
