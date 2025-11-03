@@ -28,20 +28,23 @@ public class RegisterCreated {
 
     @RabbitListener(queues = RabbitConfig.QUEUE_REGISTER_CREATED)
     public void receiveMessage(UserDTO message) {
-        logger.log(Level.INFO, "Received Register Created message for user ID: {}" + message);
+        logger.log(Level.INFO, "Received Register Created message for user ID: " + message.toString());
         try {
             if (userRepository.existsByCorrelationId(message.getId()))
                 return;
             var user = userMapper.toEntity(message);
+
             user.setIsActive(true);
             user.setType(Role.STUDENT.name());
-            if (message.getRole() == null) {
-                user.setRole(Role.STUDENT);
+            user.setRole(Role.STUDENT);
+            if (message.getRole() != null) {
+                user.setRole(message.getRole());
                 user.setType(message.getRole().name());
             }
+            logger.log(Level.INFO, "Register Created user: " + user.toString());
             userRepository.save(user);
         } catch (Exception e) {
-            logger.log(Level.WARNING, "Error: {}" + e.getMessage());
+            logger.log(Level.WARNING, "Error: " + e.getMessage());
         }
     }
 }

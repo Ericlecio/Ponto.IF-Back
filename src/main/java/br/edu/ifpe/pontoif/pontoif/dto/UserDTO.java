@@ -14,4 +14,15 @@ public class UserDTO {
     private String name;
     private String email;
     private String registration;
+
+    @Override
+    public String toString() {
+        return "UserDTO{" +
+                "id=" + id +
+                ", role=" + role +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", registration='" + registration + '\'' +
+                '}';
+    }
 }

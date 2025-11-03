@@ -3,7 +3,7 @@ version: '3.9'
 services:
   pg:
     container_name: 'POSTGRESS'
-    image: 'postgres:latest'
+    image: 'postgres:11'
     restart: 'always'
     networks:
       - my-networks
