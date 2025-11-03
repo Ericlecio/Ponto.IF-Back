@@ -3,7 +3,6 @@ package br.edu.ifpe.pontoif.pontoif.mapper;
 import br.edu.ifpe.pontoif.pontoif.dto.CourseDTO;
 import br.edu.ifpe.pontoif.pontoif.entity.Course;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 import java.util.List;
 import java.util.UUID;
@@ -12,7 +11,6 @@ import java.util.Objects;
 @Mapper(componentModel = "spring")
 public interface CourseMapper {
 
-    @Mapping(target = "id", ignore = true)
     Course toEntity(CourseDTO dto);
 
     CourseDTO toDTO(Course entity);
