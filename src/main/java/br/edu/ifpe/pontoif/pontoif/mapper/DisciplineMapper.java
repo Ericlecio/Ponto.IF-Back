@@ -17,6 +17,7 @@ public interface DisciplineMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "classroom.id", source = "classroom")
     @Mapping(target = "lessons", source = "lessons")
+    @Mapping(target = "teacher", ignore = true)
     Discipline toEntity(DisciplineDTO dto);
 
     @Mapping(target = "classroom", source = "classroom.id")

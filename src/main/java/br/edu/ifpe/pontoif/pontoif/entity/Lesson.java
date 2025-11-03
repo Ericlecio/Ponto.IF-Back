@@ -23,6 +23,8 @@ public class Lesson {
 
     private LocalTime endTime;
 
+    private Boolean isActive;
+
     @ManyToOne
     @JoinColumn(name = "discipline_id")
     private Discipline discipline;

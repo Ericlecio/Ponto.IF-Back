@@ -27,4 +27,8 @@ public class Discipline  {
 
     @OneToMany(mappedBy = "discipline", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Lesson> lessons;
+
+    @ManyToOne
+    @JoinColumn(name = "teacher_id")
+    private User teacher;
 }

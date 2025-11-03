@@ -22,6 +22,7 @@ public class BiometricService {
     private final BiometricMatchService biometricMatchService;
     private final RecordService recordService;
     private final LessonService lessonService;
+    private final TokenService tokenService;
 
     @Transactional
     public void insertBiometric(final BiometricDTO biometricDTO) {
@@ -44,6 +45,31 @@ public class BiometricService {
         } catch (Exception e) {
             log.error("Error converting image to template : {}", e.getMessage(), e);
             throw e;
+        }
+    }
+
+    @Transactional
+    public Optional<TokenDTO> matchAuth(final BiometricSampleDTO dto) {
+        try {
+            if (dto.getImage() == null || dto.getImage().length == 0) {
+                throw new IllegalArgumentException("Missing biometric image.");
+            }
+
+            FingerprintTemplate sampleTemplate = new FingerprintTemplate(
+                    new FingerprintImage(dto.getImage())
+            );
+
+            var biometric = biometricMatchService.findTeacherMatch(sampleTemplate.toByteArray());
+
+            if (biometric.isEmpty()) {
+                return Optional.empty();
+            }
+            var token = tokenService.generateToken(biometric.get().getUser());
+            return Optional.of(new TokenDTO(token));
+
+        } catch (Exception e) {
+            log.error("Error generating SourceAFIS template from image: {}", e.getMessage(), e);
+            return Optional.empty();
         }
     }
 

@@ -2,6 +2,7 @@ package br.edu.ifpe.pontoif.pontoif.controller;
 
 import br.edu.ifpe.pontoif.pontoif.dto.BiometricDTO;
 import br.edu.ifpe.pontoif.pontoif.dto.BiometricSampleDTO;
+import br.edu.ifpe.pontoif.pontoif.dto.TokenDTO;
 import br.edu.ifpe.pontoif.pontoif.service.BiometricService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -78,6 +79,13 @@ public class BiometricController {
     @PostMapping("/sample")
     public ResponseEntity<Void> matchSample(@Valid @RequestBody BiometricSampleDTO biometricSampleDTO) {
         return biometricService.matchSample(biometricSampleDTO).isPresent()
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/auth")
+    public ResponseEntity<TokenDTO> matchAuth(@Valid @RequestBody BiometricSampleDTO biometricSampleDTO) {
+        return biometricService.matchAuth(biometricSampleDTO).isPresent()
                 ? ResponseEntity.ok().build()
                 : ResponseEntity.notFound().build();
     }

@@ -1,6 +1,7 @@
 package br.edu.ifpe.pontoif.pontoif.service;
 
 import br.edu.ifpe.pontoif.pontoif.dto.DisciplineDTO;
+import br.edu.ifpe.pontoif.pontoif.dto.TeacherDTO;
 import br.edu.ifpe.pontoif.pontoif.mapper.DisciplineMapper;
 import br.edu.ifpe.pontoif.pontoif.repository.DisciplineRepository;
 import jakarta.transaction.Transactional;
@@ -17,10 +18,19 @@ public class DisciplineService {
 
     private final DisciplineRepository disciplineRepository;
     private final DisciplineMapper disciplineMapper;
+    private final UserService userService;
 
     @Transactional
     public void insertDiscipline(final DisciplineDTO disciplineDTO) {
         disciplineRepository.save(disciplineMapper.toEntity(disciplineDTO));
+    }
+
+    @Transactional
+    public void insertTeacher(final TeacherDTO teacherDTO, final UUID disciplineId) {
+        var discipline = disciplineRepository.findById(disciplineId).orElseThrow();
+        var teacher = userService.getTeacherById(teacherDTO.getId());
+        discipline.setTeacher(teacher);
+        disciplineRepository.save(discipline);
     }
 
     public List<DisciplineDTO> getAllDisciplines() {
