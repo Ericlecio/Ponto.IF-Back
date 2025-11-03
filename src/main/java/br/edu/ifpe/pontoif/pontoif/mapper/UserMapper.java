@@ -12,7 +12,6 @@ import java.util.Objects;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    @Mapping(target = "id", ignore = true)
     @Mapping(target = "biometrics", ignore = true)
     @Mapping(target = "isActive", ignore = true)
     @Mapping(target = "correlationId", ignore = true)
