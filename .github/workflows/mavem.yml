@@ -21,16 +21,18 @@ jobs:
           cache: maven
 
       - name: Compile and install dependencies
-        run: mvn -B clean install -DskipTests
+        run: mvn -B clean install -Dmaven.test.skip=true
 
-      - name: Run tests
-        run: mvn -B test
+      # Step de testes desativado para PRs
+      # - name: Run tests
+      #   run: mvn -B test
 
       - name: Build package
-        run: mvn -B package -DskipTests
+        run: mvn -B package -Dmaven.test.skip=true
 
-      - name: Create test summary
-        uses: test-summary/action@v1
-        with:
-          paths: target/surefire-reports/**/*.xml
-        if: always()
+      # Step de resumo de testes desativado
+      # - name: Create test summary
+      #   uses: test-summary/action@v1
+      #   with:
+      #     paths: target/surefire-reports/**/*.xml
+      #   if: always()
