@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
 public interface BiometricRepository extends JpaRepository <Biometric, Long> {
     List<Biometric> findAllByUser_Role(Role role);
 }

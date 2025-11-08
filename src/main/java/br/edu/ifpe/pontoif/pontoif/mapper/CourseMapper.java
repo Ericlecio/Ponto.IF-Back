@@ -3,6 +3,8 @@ package br.edu.ifpe.pontoif.pontoif.mapper;
 import br.edu.ifpe.pontoif.pontoif.dto.CourseDTO;
 import br.edu.ifpe.pontoif.pontoif.entity.Course;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 import java.util.List;
 import java.util.UUID;
@@ -11,6 +13,7 @@ import java.util.Objects;
 @Mapper(componentModel = "spring")
 public interface CourseMapper {
 
+    @Mapping(target = "createdAt", ignore = true)
     Course toEntity(CourseDTO dto);
 
     CourseDTO toDTO(Course entity);
@@ -21,6 +24,9 @@ public interface CourseMapper {
         c.setId(id);
         return c;
     }
+
+    @Mapping(target = "createdAt", ignore = true)
+    void updateEntityFromDTO(CourseDTO dto, @MappingTarget Course entity);
 
     default UUID toId(Course course) {
         return course != null ? course.getId() : null;

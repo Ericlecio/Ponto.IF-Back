@@ -1,26 +1,24 @@
 package br.edu.ifpe.pontoif.pontoif.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-
-import java.util.List;
-import java.util.UUID;
+import lombok.*;
+import java.time.Instant;
 
 @Entity
 @Table(name = "classrooms")
-@Data
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Classroom {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(length = 50 , nullable = false)
-    private String code;
+    @Column(name = "created_at", updatable = false)
+    private Instant createdAt;
 
-    @ManyToOne
-    @JoinColumn(name = "course_id")
-    private Course course;
+    @Column(nullable = false)
+    private String name;
 
-    @OneToMany(mappedBy = "classroom", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Discipline> disciplines;
+    private String location;
+
+    @PrePersist void prePersist(){ if(createdAt==null) createdAt = Instant.now(); }
 }
+
