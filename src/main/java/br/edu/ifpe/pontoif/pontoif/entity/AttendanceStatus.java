@@ -1,7 +1,9 @@
 package br.edu.ifpe.pontoif.pontoif.entity;
 
-public enum Status {
+public enum AttendanceStatus {
     PRESENT,
     ABSENT,
-    DELAYED
+    LATE,
+    JUSTIFIED
 }
+

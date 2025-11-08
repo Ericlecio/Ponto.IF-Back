@@ -34,7 +34,7 @@ public class BiometricMatchService {
                 .max(Comparator.comparingDouble(MatchResult::score))
                 .map(best -> {
                     log.info("🔎 Best match for role {} → user={} (score={})",
-                            role, best.biometric().getUser().getName(), best.score());
+                            role, best.biometric().getUser().getFullName(), best.score());
                     return best.biometric();
                 });
     }
@@ -49,13 +49,13 @@ public class BiometricMatchService {
                 .max(Comparator.comparingDouble(MatchResult::score))
                 .map(best -> {
                     log.info("🔍 Best global match → user={} (score={})",
-                            best.biometric().getUser().getName(), best.score());
+                            best.biometric().getUser().getFullName(), best.score());
                     return best.biometric();
                 });
     }
 
     public Optional<Biometric> findTeacherMatch(byte[] sampleTemplate) {
-        return findMatchByRole(sampleTemplate, Role.PROFESSOR);
+        return findMatchByRole(sampleTemplate, Role.TEACHER);
     }
 
     public Optional<Biometric> findStudentMatch(byte[] sampleTemplate) {

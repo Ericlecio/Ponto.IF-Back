@@ -30,18 +30,15 @@ public class RegisterCreated {
     public void receiveMessage(UserDTO message) {
         logger.log(Level.INFO, "Received Register Created message for user ID: " + message.toString());
         try {
-            if (userRepository.existsByCorrelationId(message.getId()))
+            if (userRepository.existsById(message.getId()))
                 return;
             var user = userMapper.toEntity(message);
 
-            user.setIsActive(true);
-            user.setType(Role.STUDENT.name());
             user.setRole(Role.STUDENT);
             if (message.getRole() != null) {
                 user.setRole(message.getRole());
-                user.setType(message.getRole().name());
             }
-            logger.log(Level.INFO, "Register Created user: " + user.toString());
+            logger.log(Level.INFO, "Register Created user: " + user);
             userRepository.save(user);
         } catch (Exception e) {
             logger.log(Level.WARNING, "Error: " + e.getMessage());

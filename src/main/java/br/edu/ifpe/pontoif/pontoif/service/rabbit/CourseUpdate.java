@@ -4,29 +4,26 @@ import br.edu.ifpe.pontoif.pontoif.configurations.RabbitConfig;
 import br.edu.ifpe.pontoif.pontoif.mapper.CourseMapper;
 import br.edu.ifpe.pontoif.pontoif.dto.CourseDTO;
 import br.edu.ifpe.pontoif.pontoif.repository.CourseRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
 
 @Component
+@RequiredArgsConstructor
 public class CourseUpdate {
 
     private final CourseRepository courseRepository;
-
-    public CourseUpdate(final CourseRepository courseRepository) {
-        this.courseRepository = courseRepository;
-    }
+    private final CourseMapper courseMapper;
 
     @RabbitListener(queues = RabbitConfig.QUEUE_COURSE_CREATED)
     public void receiveMessage(CourseDTO message) {
-        var course = courseRepository.findByCorrelationId(message.getId());
-        if (course == null)
+        var course = courseRepository.findById(message.getId());
+        if (course.isEmpty())
             return;
-        course.setName(message.getName());
-        course.setAcronym(message.getAcronym());
-        course.setEndTime(message.getEndTime());
-        course.setStartTime(message.getStartTime());
-        course.setDurationInMonths(message.getDurationInMonths());
-        courseRepository.save(course);
+        course.ifPresent(c -> {
+            courseMapper.updateEntityFromDTO(message, c);
+            courseRepository.save(c);
+        });
     }
 }

@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "courses")
+@Table(name = "subjects")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Course {
+public class Subject {
     @Id
     private UUID id;
 
@@ -26,6 +26,8 @@ public class Course {
 
     @Column(nullable = false, unique = true)
     private String code;
+
+    private String description;
 
     @PrePersist
     void prePersist() {

@@ -2,9 +2,8 @@ package br.edu.ifpe.pontoif.pontoif.entity;
 
 public enum Role {
     ADMIN,
+    TEACHER,
     SECRETARY,
-    TECHNICIAN,
-    PROFESSOR,
     STUDENT;
 
     public String toAuthorize() {

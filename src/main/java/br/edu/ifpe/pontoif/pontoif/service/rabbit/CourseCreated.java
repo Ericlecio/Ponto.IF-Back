@@ -23,7 +23,7 @@ public class CourseCreated {
 
     @RabbitListener(queues = RabbitConfig.QUEUE_COURSE_CREATED)
     public void receiveMessage(CourseDTO message) {
-        if (courseRepository.existsByCorrelationId(message.getId()))
+        if (courseRepository.existsById(message.getId()))
             return;
         var course = courseMapper.toEntity(message);
         courseRepository.save(course);

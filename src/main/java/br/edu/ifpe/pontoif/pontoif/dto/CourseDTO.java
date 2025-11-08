@@ -1,9 +1,11 @@
 package br.edu.ifpe.pontoif.pontoif.dto;
 
+import br.edu.ifpe.pontoif.pontoif.entity.Subject;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -11,8 +13,6 @@ import java.util.UUID;
 public class CourseDTO {
     private UUID id;
     private String name;
-    private String acronym;
-    private Integer durationInMonths;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private String code;
+    private List<Subject> subjects;
 }
