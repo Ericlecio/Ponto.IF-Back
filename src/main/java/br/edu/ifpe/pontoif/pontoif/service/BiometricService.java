@@ -74,7 +74,7 @@ public class BiometricService {
     }
 
     @Transactional
-    public Optional<Biometric> matchSample(final BiometricSampleDTO dto) {
+    public Optional<BiometricMatchResultDTO> matchSample(final BiometricSampleDTO dto) {
         try {
             if (dto.getImage() == null || dto.getImage().length == 0) {
                 throw new IllegalArgumentException("Missing biometric image.");
@@ -84,8 +84,15 @@ public class BiometricService {
                     new FingerprintImage(dto.getImage())
             );
 
-            return biometricMatchService.findBestMatch(sampleTemplate.toByteArray())
-                    .map(this::processMatchedBiometric);
+            Optional<BiometricMatchResultDTO> matchOpt =
+                    biometricMatchService.findBestMatch(sampleTemplate.toByteArray());
+
+            matchOpt.ifPresent(matchResult -> {
+                biometricRepository.findById(matchResult.getBiometricId())
+                        .ifPresent(this::processMatchedBiometric);
+            });
+
+            return matchOpt;
 
         } catch (Exception e) {
             log.error("Error generating SourceAFIS template from image: {}", e.getMessage(), e);
@@ -107,18 +114,19 @@ public class BiometricService {
         return dto;
     }
 
+
     public List<BiometricDTO> getAllBiometrics() {
         return biometricRepository.findAll().stream()
                 .map(biometricMapper::toDTO)
                 .toList();
     }
 
-    public Optional<BiometricDTO> getBiometricById(final Long id) {
+    public Optional<BiometricDTO> getBiometricById(final UUID id) {
         return biometricRepository.findById(id).map(biometricMapper::toDTO);
     }
 
     @Transactional
-    public boolean deleteBiometric(final Long id) {
+    public boolean deleteBiometric(final UUID id) {
         return biometricRepository.findById(id)
                 .map(b -> { biometricRepository.delete(b); return true; })
                 .orElse(false);
