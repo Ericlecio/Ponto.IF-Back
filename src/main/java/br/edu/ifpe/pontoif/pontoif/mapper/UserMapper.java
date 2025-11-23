@@ -1,5 +1,6 @@
 package br.edu.ifpe.pontoif.pontoif.mapper;
 
+import br.edu.ifpe.pontoif.pontoif.dto.TeacherDTO;
 import br.edu.ifpe.pontoif.pontoif.dto.UserDTO;
 import br.edu.ifpe.pontoif.pontoif.dto.UserUpdateDTO;
 import br.edu.ifpe.pontoif.pontoif.entity.User;
@@ -28,6 +29,9 @@ public interface UserMapper {
     @Mapping(target = "fullName", source = "name")
     @Mapping(target = "updatedAt", ignore = true)
     void updateEntityFromDTO(UserUpdateDTO dto, @MappingTarget User entity);
+
+    @Mapping(target = "name", source = "fullName")
+    TeacherDTO toTeacherDTO(User user);
 
     default User fromId(UUID id) {
         if (id == null) return null;
