@@ -35,9 +35,9 @@ public class SubjectOfferingController {
             }
     )
     @PostMapping
-    public ResponseEntity<SubjectOfferingDTO> create(@Valid @RequestBody SubjectOfferingDTO dto) {
-        SubjectOfferingDTO created = service.create(dto);
-        return new ResponseEntity<>(created, HttpStatus.CREATED);
+    public ResponseEntity<Void> create(@Valid @RequestBody SubjectOfferingDTO dto) {
+        service.create(dto);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @Operation(

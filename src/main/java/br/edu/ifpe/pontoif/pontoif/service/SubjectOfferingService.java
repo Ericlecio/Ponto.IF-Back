@@ -6,12 +6,10 @@ import br.edu.ifpe.pontoif.pontoif.mapper.SubjectOfferingMapper;
 import br.edu.ifpe.pontoif.pontoif.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SubjectOfferingService {
@@ -26,7 +24,7 @@ public class SubjectOfferingService {
 
     private final SubjectOfferingMapper mapper;
 
-    public SubjectOfferingDTO create(SubjectOfferingDTO dto) {
+    public void create(SubjectOfferingDTO dto) {
 
         CourseSubject cs = courseSubjectRepository.findById(dto.getCourseSubjectId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid courseSubjectId"));
@@ -45,9 +43,7 @@ public class SubjectOfferingService {
         entity.setSchedule(dto.getSchedule());
 
         offeringRepository.save(entity);
-
-        log.info("Offering created with ID {}", entity.getId());
-        return mapper.toDTO(entity);
+        mapper.toDTO(entity);
     }
 
     @Transactional
@@ -71,38 +67,27 @@ public class SubjectOfferingService {
             existing.setSchedule(dto.getSchedule());
 
             offeringRepository.save(existing);
-            log.info("Offering {} updated", id);
 
             return mapper.toDTO(existing);
         });
     }
 
-    // ------------------------------------------------------
-    // GET ALL
-    // ------------------------------------------------------
     public List<SubjectOfferingDTO> getAll() {
         return offeringRepository.findAll().stream()
                 .map(mapper::toDTO)
                 .toList();
     }
 
-    // ------------------------------------------------------
-    // GET BY ID
-    // ------------------------------------------------------
     public Optional<SubjectOfferingDTO> getById(Long id) {
         return offeringRepository.findById(id)
                 .map(mapper::toDTO);
     }
 
-    // ------------------------------------------------------
-    // DELETE
-    // ------------------------------------------------------
     @Transactional
     public boolean delete(Long id) {
         return offeringRepository.findById(id)
-                .map(off -> {
-                    offeringRepository.delete(off);
-                    log.info("Offering {} deleted", id);
+                .map(subjectOffering -> {
+                    offeringRepository.delete(subjectOffering);
                     return true;
                 })
                 .orElse(false);
