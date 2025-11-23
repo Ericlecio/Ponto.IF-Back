@@ -9,6 +9,8 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface SubjectMapper {
 
+    SubjectDTO toDTO(Subject entity);
+
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "id", ignore = true)
     Subject toEntity(SubjectDTO dto);
