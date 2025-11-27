@@ -1,11 +1,11 @@
 package br.edu.ifpe.pontoif.pontoif.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
-import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -38,7 +38,7 @@ public class User {
     private Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private HashSet<Biometric> biometrics;
+    private Set<Biometric> biometrics;
 
     @PrePersist
     void prePersist() {
