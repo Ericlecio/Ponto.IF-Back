@@ -7,10 +7,7 @@ import br.edu.ifpe.pontoif.pontoif.entity.AttendanceRecord;
 import br.edu.ifpe.pontoif.pontoif.service.AttendanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -39,6 +36,12 @@ public class AttendanceController {
         ).toList();
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/offering/{offeringId}")
+    public ResponseEntity<List<AttendanceDTO>> getAttendanceByOffering(@PathVariable Long offeringId) {
+        List<AttendanceDTO> list = attendanceService.getAttendanceByOffering(offeringId);
+        return ResponseEntity.ok(list);
     }
 
 }

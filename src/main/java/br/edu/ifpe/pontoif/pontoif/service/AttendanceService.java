@@ -50,4 +50,21 @@ public class AttendanceService {
 
         return savedRecords;
     }
+
+    public List<AttendanceDTO> getAttendanceByOffering(Long offeringId) {
+
+        List<AttendanceRecord> records = attendanceRecordRepository.findAllByOfferingId(offeringId);
+
+        return records.stream().map(r ->
+                AttendanceDTO.builder()
+                        .id(r.getId())
+                        .session(r.getSession())
+                        .student(r.getStudent())
+                        .recordedAt(r.getRecordedAt())
+                        .status(r.getStatus())
+                        .confidence(r.getConfidence())
+                        .metadata(r.getMetadata())
+                        .build()
+        ).toList();
+    }
 }

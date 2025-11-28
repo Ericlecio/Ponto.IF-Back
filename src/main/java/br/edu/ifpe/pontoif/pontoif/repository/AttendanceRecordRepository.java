@@ -5,8 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
+import java.util.List;
 
 @Repository
 public interface AttendanceRecordRepository extends JpaRepository<AttendanceRecord, Long> {
     Collection<AttendanceRecord> findAllBySession_Id(Long id);
+
+    List<AttendanceRecord> findAllByOfferingId(Long offeringId);
 }
