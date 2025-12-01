@@ -12,8 +12,8 @@ import java.time.Instant;
 import java.util.Map;
 
 @Slf4j
-//@Component
-//@Profile("dev")
+@Component
+@Profile("dev")
 @RequiredArgsConstructor
 public class DataMockLoader {
 

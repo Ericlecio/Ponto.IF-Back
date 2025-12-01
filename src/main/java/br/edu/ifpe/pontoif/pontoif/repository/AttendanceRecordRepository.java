@@ -1,7 +1,9 @@
 package br.edu.ifpe.pontoif.pontoif.repository;
 
 import br.edu.ifpe.pontoif.pontoif.entity.AttendanceRecord;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
@@ -11,5 +13,6 @@ import java.util.List;
 public interface AttendanceRecordRepository extends JpaRepository<AttendanceRecord, Long> {
     Collection<AttendanceRecord> findAllBySession_Id(Long id);
 
-    List<AttendanceRecord> findAllByOfferingId(Long offeringId);
+    @Query("SELECT a FROM AttendanceRecord a WHERE a.session.offering.id = :offeringId")
+    List<AttendanceRecord> findAllByOfferingId(@Param("offeringId") Long offeringId);
 }
