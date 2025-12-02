@@ -27,7 +27,7 @@ public class User {
     @Column(nullable = false, length = 150, unique = true)
     private String email;
 
-    @Column(length = 20, unique = true)
+    @Column(length = 20)
     private String registration;
 
     private Boolean isActive;
