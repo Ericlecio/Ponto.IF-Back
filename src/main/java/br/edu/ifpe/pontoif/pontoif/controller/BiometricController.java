@@ -3,6 +3,8 @@ package br.edu.ifpe.pontoif.pontoif.controller;
 import br.edu.ifpe.pontoif.pontoif.dto.BiometricDTO;
 import br.edu.ifpe.pontoif.pontoif.dto.BiometricSampleDTO;
 import br.edu.ifpe.pontoif.pontoif.dto.TokenDTO;
+import br.edu.ifpe.pontoif.pontoif.dto.UserDTO;
+import br.edu.ifpe.pontoif.pontoif.mapper.UserMapper;
 import br.edu.ifpe.pontoif.pontoif.service.BiometricService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,6 +27,7 @@ import java.util.Optional;
 public class BiometricController {
 
     private final BiometricService biometricService;
+    private final UserMapper userMapper;
 
     @Operation(
             summary = "Register a new biometric",
@@ -35,9 +38,16 @@ public class BiometricController {
             }
     )
     @PostMapping
-    public ResponseEntity<Void> createBiometric(@Valid @RequestBody BiometricDTO biometricDTO) {
-        biometricService.insertBiometric(biometricDTO);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<UserDTO> createBiometric(@Valid @RequestBody BiometricDTO biometricDTO) {
+        var match = biometricService.matchSample(biometricSampleDTO);
+
+        if (match.isPresent()) {
+            // Converte o usuário encontrado para DTO e retorna no corpo da resposta
+            UserDTO userDTO = userMapper.toDTO(match.get().getUser());
+            return ResponseEntity.ok(userDTO);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @Operation(
