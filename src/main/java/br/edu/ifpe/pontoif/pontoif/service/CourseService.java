@@ -1,10 +1,8 @@
 package br.edu.ifpe.pontoif.pontoif.service;
 
 import br.edu.ifpe.pontoif.pontoif.dto.CourseDTO;
-import br.edu.ifpe.pontoif.pontoif.dto.DisciplineDTO;
 import br.edu.ifpe.pontoif.pontoif.mapper.CourseMapper;
 import br.edu.ifpe.pontoif.pontoif.repository.CourseRepository;
-import br.edu.ifpe.pontoif.pontoif.repository.DisciplineRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

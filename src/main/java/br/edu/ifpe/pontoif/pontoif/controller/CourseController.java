@@ -1,7 +1,6 @@
 package br.edu.ifpe.pontoif.pontoif.controller;
 
 import br.edu.ifpe.pontoif.pontoif.dto.CourseDTO;
-import br.edu.ifpe.pontoif.pontoif.dto.DisciplineDTO;
 import br.edu.ifpe.pontoif.pontoif.service.CourseService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
