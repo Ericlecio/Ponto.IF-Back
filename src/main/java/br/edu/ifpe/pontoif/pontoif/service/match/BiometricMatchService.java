@@ -35,7 +35,7 @@ public class BiometricMatchService {
                 .max(Comparator.comparingDouble(MatchResult::score))
                 .map(best -> {
                     log.info("🔎 Best match for role {} → user={} (score={})",
-                            role, best.biometric().getUser().getFullName(), best.score());
+                            role, best.biometric().getUser().getName(), best.score());
                     return best.biometric();
                 });
     }
@@ -53,7 +53,7 @@ public class BiometricMatchService {
                     double score = best.score();
 
                     log.info("🔍 Best global match → user={} (score={})",
-                            biometric.getUser().getFullName(), score);
+                            biometric.getUser().getName(), score);
 
                     BiometricMatchResultDTO dto = new BiometricMatchResultDTO();
                     dto.setBiometricId(biometric.getId());

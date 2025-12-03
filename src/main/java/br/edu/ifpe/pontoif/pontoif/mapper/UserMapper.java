@@ -16,21 +16,13 @@ import java.util.Objects;
 public interface UserMapper {
 
     @Mapping(target = "biometrics", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "fullName", source = "name")
-    @Mapping(target = "updatedAt", ignore = true)
     User toEntity(UserDTO dto);
 
-    @Mapping(target = "name", source = "fullName")
     UserDTO toDTO(User user);
 
     @Mapping(target = "biometrics", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "fullName", source = "name")
-    @Mapping(target = "updatedAt", ignore = true)
     void updateEntityFromDTO(UserUpdateDTO dto, @MappingTarget User entity);
 
-    @Mapping(target = "name", source = "fullName")
     TeacherDTO toTeacherDTO(User user);
 
     default User fromId(UUID id) {

@@ -47,7 +47,7 @@ public class DataMockLoader {
         // Usuário (Aluno)
         // -------------------------
         User student = User.builder()
-                .fullName("Maria dos Santos")
+                .name("Maria dos Santos")
                 .email("maria.santos@ifpe.edu.br")
                 .registration("IFPE2025A01")
                 .role(Role.STUDENT)
@@ -62,7 +62,7 @@ public class DataMockLoader {
 
         // Professor
         User teacher = User.builder()
-                .fullName("João Professor")
+                .name("João Professor")
                 .email("joao.prof@ifpe.edu.br")
                 .registration("IFPE-TCH-001")
                 .role(Role.TEACHER)
