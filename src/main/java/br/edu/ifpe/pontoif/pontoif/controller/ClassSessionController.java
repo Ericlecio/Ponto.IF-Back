@@ -20,7 +20,7 @@ public class ClassSessionController {
 
     private final ClassSessionService service;
 
-    @Operation(summary = "get session by offer id")
+    @Operation(summary = "get actual session by offer id")
     @GetMapping("/{offerId}")
     public ResponseEntity<SessionResponseDTO> getByOfferId(@Valid @PathVariable Long offerId) {
         return ResponseEntity.ok(service.getActualSessionId(offerId));
