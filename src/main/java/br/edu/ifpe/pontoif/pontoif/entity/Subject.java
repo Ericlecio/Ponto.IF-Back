@@ -29,6 +29,14 @@ public class Subject {
 
     private String description;
 
+    @ManyToMany
+    @JoinTable(
+            name = "courses_subjects",
+            joinColumns = @JoinColumn(name = "subject_id"),
+            inverseJoinColumns = @JoinColumn(name = "courses_id")
+    )
+    private List<Course> courses;
+
     @PrePersist
     void prePersist() {
         if (id == null) id = UUID.randomUUID();

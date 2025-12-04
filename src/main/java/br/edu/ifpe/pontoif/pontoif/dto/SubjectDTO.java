@@ -15,7 +15,7 @@ import java.util.UUID;
 public class SubjectDTO {
     private UUID id;
     @NotNull
-    private List<Course> courses;
+    private List<UUID> courses;
     @NotBlank
     @Size(min = 1, max = 100)
     private String name;
