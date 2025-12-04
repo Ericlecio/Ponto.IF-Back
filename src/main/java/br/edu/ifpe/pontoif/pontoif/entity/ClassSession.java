@@ -27,7 +27,7 @@ public class ClassSession {
     @Column(name = "session_start", nullable = false)
     private Instant sessionStart;
 
-    @Column(name = "session_end", nullable = false)
+    @Column(name = "session_end")
     private Instant sessionEnd;
 
     @Column(name = "external_code")

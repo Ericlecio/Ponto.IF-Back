@@ -79,6 +79,6 @@ public class SubjectController {
     public ResponseEntity<Void> finalizeClass(@PathVariable Long offeringId,
                                               @RequestParam UUID teacherId) {
         subjectOfferingService.endClassSession(offeringId, teacherId);
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

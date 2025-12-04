@@ -1,6 +1,7 @@
 package br.edu.ifpe.pontoif.pontoif.service;
 
 import br.edu.ifpe.pontoif.pontoif.dto.SessionResponseDTO;
+import br.edu.ifpe.pontoif.pontoif.exception.NotFoundException;
 import br.edu.ifpe.pontoif.pontoif.mapper.ClassSessionMapper;
 import br.edu.ifpe.pontoif.pontoif.repository.ClassSessionRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,11 @@ public class ClassSessionService {
                     log.info("Found actual session ID: {} for offering ID: {}", session.getId(), offeringId);
                     return mapper.toDTO(session);
                 })
-                .orElseGet(() -> {
-                    log.warn("No actual session found for offering ID: {}", offeringId);
-                    return null;
-                });
+                .orElseThrow(
+                        () -> {
+                            log.warn("No actual session found for offering ID: {}", offeringId);
+                            return new NotFoundException("No actual session found for the given offering ID");
+                        }
+                );
     }
 }

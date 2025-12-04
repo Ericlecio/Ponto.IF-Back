@@ -2,6 +2,7 @@ package br.edu.ifpe.pontoif.pontoif.service;
 
 import br.edu.ifpe.pontoif.pontoif.dto.SubjectOfferingDTO;
 import br.edu.ifpe.pontoif.pontoif.entity.*;
+import br.edu.ifpe.pontoif.pontoif.exception.NotFoundException;
 import br.edu.ifpe.pontoif.pontoif.mapper.SubjectOfferingMapper;
 import br.edu.ifpe.pontoif.pontoif.repository.*;
 import jakarta.transaction.Transactional;
@@ -115,7 +116,7 @@ public class SubjectOfferingService {
     @Transactional
     public void startClassSession(Long offeringId, UUID teacherId) {
         SubjectOffering offering = offeringRepository.findById(offeringId)
-                .orElseThrow(() -> new NoSuchElementException("Offering not found"));
+                .orElseThrow(() -> new NotFoundException("Offering not found"));
 
         if (!offering.getTeacher().getId().equals(teacherId)) {
             throw new SecurityException("Teacher not authorized for this offering");
@@ -130,6 +131,7 @@ public class SubjectOfferingService {
         ClassSession session = new ClassSession();
         session.setOffering(offering);
         session.setSessionStart(Instant.now());
+        session.setCreatedAt(Instant.now());
 
         classSessionRepository.save(session);
     }
