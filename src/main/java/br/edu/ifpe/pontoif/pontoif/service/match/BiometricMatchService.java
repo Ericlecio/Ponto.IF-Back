@@ -1,5 +1,6 @@
 package br.edu.ifpe.pontoif.pontoif.service.match;
 
+import br.edu.ifpe.pontoif.pontoif.dto.BiometricMatchResultDTO;
 import br.edu.ifpe.pontoif.pontoif.entity.Biometric;
 import br.edu.ifpe.pontoif.pontoif.entity.Role;
 import br.edu.ifpe.pontoif.pontoif.repository.BiometricRepository;
@@ -34,12 +35,12 @@ public class BiometricMatchService {
                 .max(Comparator.comparingDouble(MatchResult::score))
                 .map(best -> {
                     log.info("🔎 Best match for role {} → user={} (score={})",
-                            role, best.biometric().getUser().getName(), best.score());
+                            role, best.biometric().getUser().getFullName(), best.score());
                     return best.biometric();
                 });
     }
 
-    public Optional<Biometric> findBestMatch(byte[] sampleTemplate) {
+    public Optional<BiometricMatchResultDTO> findBestMatch(byte[] sampleTemplate) {
         List<Biometric> candidates = biometricRepository.findAll();
 
         return candidates.stream()
@@ -48,14 +49,22 @@ public class BiometricMatchService {
                 .filter(r -> r.score() > 0)
                 .max(Comparator.comparingDouble(MatchResult::score))
                 .map(best -> {
+                    Biometric biometric = best.biometric();
+                    double score = best.score();
+
                     log.info("🔍 Best global match → user={} (score={})",
-                            best.biometric().getUser().getName(), best.score());
-                    return best.biometric();
+                            biometric.getUser().getFullName(), score);
+
+                    BiometricMatchResultDTO dto = new BiometricMatchResultDTO();
+                    dto.setBiometricId(biometric.getId());
+                    dto.setStudentId(biometric.getUser().getId());
+                    dto.setScore(score);
+                    return dto;
                 });
     }
 
     public Optional<Biometric> findTeacherMatch(byte[] sampleTemplate) {
-        return findMatchByRole(sampleTemplate, Role.PROFESSOR);
+        return findMatchByRole(sampleTemplate, Role.TEACHER);
     }
 
     public Optional<Biometric> findStudentMatch(byte[] sampleTemplate) {

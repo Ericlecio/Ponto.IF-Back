@@ -1,10 +1,9 @@
 package br.edu.ifpe.pontoif.pontoif.repository;
 
-import br.edu.ifpe.pontoif.pontoif.entity.Course;
+import br.edu.ifpe.pontoif.pontoif.entity.CourseSubject;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import java.util.UUID;
 
 @Repository
-public interface CourseRepository extends JpaRepository<Course, UUID> {
+public interface CourseSubjectRepository extends JpaRepository<CourseSubject, Long>{
 }

@@ -9,4 +9,5 @@ import java.util.UUID;
 @Setter
 public class TeacherDTO {
     private UUID id;
+    private String name;
 }

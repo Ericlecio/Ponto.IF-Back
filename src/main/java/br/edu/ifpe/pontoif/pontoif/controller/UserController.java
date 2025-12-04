@@ -1,11 +1,7 @@
 package br.edu.ifpe.pontoif.pontoif.controller;
 
-
-import br.edu.ifpe.pontoif.pontoif.dto.DisciplineDTO;
-import br.edu.ifpe.pontoif.pontoif.dto.ListPresentDTO;
+import br.edu.ifpe.pontoif.pontoif.dto.SubjectOfferingDTO;
 import br.edu.ifpe.pontoif.pontoif.dto.UserDTO;
-import br.edu.ifpe.pontoif.pontoif.dto.UserReportDTO;
-import br.edu.ifpe.pontoif.pontoif.entity.User;
 import br.edu.ifpe.pontoif.pontoif.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -26,25 +22,20 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/discipline/teacher")
-    public ResponseEntity<List<DisciplineDTO>> getDisciplineByUser(User user) {
-        return ResponseEntity.ok(userService.getDisciplineByTeacher(user.getId()));
-    }
-
-    @GetMapping("/report")
-    public ResponseEntity<UserReportDTO> getReportByUser(User user) {
-        UserReportDTO report = userService.getReportByUser(user);
-        return ResponseEntity.ok(report);
-    }
-
-    @GetMapping("/report/{disciplineId}")
-    public ResponseEntity<ListPresentDTO> getReportByUser(User user, @PathVariable("disciplineId") UUID disciplineId) {
-        var report = userService.getReportByDiscipline(disciplineId);
-        return ResponseEntity.ok(report);
-    }
-
     @GetMapping("/teacher")
     public ResponseEntity<List<UserDTO>> getTeacher() {
         return ResponseEntity.ok(userService.getTeachers());
+    }
+
+    @GetMapping("/teacher/{id}")
+    public ResponseEntity<UserDTO> getTeacherById(@PathVariable UUID id) {
+        return userService.getTeacherById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/teachers/{id}/offerings")
+    public ResponseEntity<List<SubjectOfferingDTO>> getTeacherOfferings(UUID id) {
+        return ResponseEntity.ok(userService.getTeacherOfferings(id));
     }
 }

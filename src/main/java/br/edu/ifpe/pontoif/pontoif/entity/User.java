@@ -1,52 +1,54 @@
 package br.edu.ifpe.pontoif.pontoif.entity;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.util.List;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.Instant;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
 @Table(name = "users")
-@Data
-@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class User {
     @Id
     private UUID id;
 
-    private UUID correlationId;
+    @Column(name = "created_at", updatable = false)
+    private Instant createdAt;
 
-    @Column(nullable = false, length = 100)
-    private String name;
+    @Column(name = "updated_at")
+    private Instant updatedAt;
 
-    @Column(nullable = false, length = 150, unique = true)
-    private String email;
+    @Column(name = "full_name", nullable = false)
+    private String fullName;
 
     @Column(length = 20)
     private String registration;
 
-    private Boolean isActive;
-
-    private String type;
+    @Column(nullable = false, unique = true)
+    private String email;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Biometric> biometrics;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Biometric> biometrics;
 
     @PrePersist
-    public void prePersist() {
-        if (id == null) {
-            id = UUID.randomUUID();
-        }
-        if (correlationId == null) {
-            correlationId = UUID.randomUUID();
-        }
+    void prePersist() {
+        if (createdAt == null) createdAt = Instant.now();
+        if (updatedAt == null) updatedAt = createdAt;
+        if (id == null) id = UUID.randomUUID();
+    }
+
+    @PreUpdate
+    void preUpdate() {
+        updatedAt = Instant.now();
     }
 }

@@ -20,8 +20,6 @@ public class BiometricService {
     private final BiometricRepository biometricRepository;
     private final BiometricMapper biometricMapper;
     private final BiometricMatchService biometricMatchService;
-    private final RecordService recordService;
-    private final LessonService lessonService;
     private final TokenService tokenService;
 
     @Transactional
@@ -74,7 +72,7 @@ public class BiometricService {
     }
 
     @Transactional
-    public Optional<Biometric> matchSample(final BiometricSampleDTO dto) {
+    public Optional<BiometricMatchResultDTO> matchSample(final BiometricSampleDTO dto) {
         try {
             if (dto.getImage() == null || dto.getImage().length == 0) {
                 throw new IllegalArgumentException("Missing biometric image.");
@@ -84,8 +82,15 @@ public class BiometricService {
                     new FingerprintImage(dto.getImage())
             );
 
-            return biometricMatchService.findBestMatch(sampleTemplate.toByteArray())
-                    .map(this::processMatchedBiometric);
+            Optional<BiometricMatchResultDTO> matchOpt =
+                    biometricMatchService.findBestMatch(sampleTemplate.toByteArray());
+
+            matchOpt.ifPresent(matchResult -> {
+                biometricRepository.findById(matchResult.getBiometricId())
+                        .ifPresent(this::processMatchedBiometric);
+            });
+
+            return matchOpt;
 
         } catch (Exception e) {
             log.error("Error generating SourceAFIS template from image: {}", e.getMessage(), e);
@@ -94,18 +99,20 @@ public class BiometricService {
     }
 
     private Biometric processMatchedBiometric(Biometric biometric) {
-        lessonService.getCurrentLesson(biometric.getUser())
-                .ifPresent(lesson ->
-                        recordService.insertRecord(createRecordDTO(biometric, lesson)));
-        return biometric;
+//        lessonService.getCurrentLesson(biometric.getUser())
+//                .ifPresent(lesson ->
+//                        recordService.insertRecord(createRecordDTO(biometric, lesson)));
+//        return biometric;
+        return null;
     }
 
-    private RecordDTO createRecordDTO(Biometric biometric, Lesson lesson) {
-        RecordDTO dto = new RecordDTO();
-        dto.setUser(biometric.getUser().getId());
-        dto.setLesson(lesson.getId());
-        return dto;
-    }
+//    private RecordDTO createRecordDTO(Biometric biometric, Lesson lesson) {
+//        RecordDTO dto = new RecordDTO();
+//        dto.setUser(biometric.getUser().getId());
+//        dto.setLesson(lesson.getId());
+//        return null;
+//    }
+
 
     public List<BiometricDTO> getAllBiometrics() {
         return biometricRepository.findAll().stream()
@@ -113,12 +120,12 @@ public class BiometricService {
                 .toList();
     }
 
-    public Optional<BiometricDTO> getBiometricById(final Long id) {
+    public Optional<BiometricDTO> getBiometricById(final UUID id) {
         return biometricRepository.findById(id).map(biometricMapper::toDTO);
     }
 
     @Transactional
-    public boolean deleteBiometric(final Long id) {
+    public boolean deleteBiometric(final UUID id) {
         return biometricRepository.findById(id)
                 .map(b -> { biometricRepository.delete(b); return true; })
                 .orElse(false);
