@@ -28,7 +28,7 @@ public class User {
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
-    @Column(name = "registration", nullable = false, unique = true)
+    @Column(length = 20)
     private String registration;
 
     @Column(nullable = false, unique = true)
