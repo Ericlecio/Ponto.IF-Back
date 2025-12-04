@@ -2,12 +2,14 @@ package br.edu.ifpe.pontoif.pontoif.service;
 
 import br.edu.ifpe.pontoif.pontoif.dto.SubjectOfferingDTO;
 import br.edu.ifpe.pontoif.pontoif.entity.*;
+import br.edu.ifpe.pontoif.pontoif.exception.NotFoundException;
 import br.edu.ifpe.pontoif.pontoif.mapper.SubjectOfferingMapper;
 import br.edu.ifpe.pontoif.pontoif.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.*;
 
 @Service
@@ -109,5 +111,48 @@ public class SubjectOfferingService {
                                 .stream()
                 )
                 .toList();
+    }
+
+    @Transactional
+    public void startClassSession(Long offeringId, UUID teacherId) {
+        SubjectOffering offering = offeringRepository.findById(offeringId)
+                .orElseThrow(() -> new NotFoundException("Offering not found"));
+
+        if (!offering.getTeacher().getId().equals(teacherId)) {
+            throw new SecurityException("Teacher not authorized for this offering");
+        }
+
+        List<ClassSession> sessions = classSessionRepository.findAllByOffering_Id(offeringId);
+        boolean hasActive = sessions.stream().anyMatch(s -> s.getSessionEnd() == null);
+        if (hasActive) {
+            throw new IllegalStateException("There is already an active session for this offering");
+        }
+
+        ClassSession session = new ClassSession();
+        session.setOffering(offering);
+        session.setSessionStart(Instant.now());
+        session.setCreatedAt(Instant.now());
+
+        classSessionRepository.save(session);
+    }
+
+    @Transactional
+    public void endClassSession(Long offeringId, UUID teacherId) {
+        SubjectOffering offering = offeringRepository.findById(offeringId)
+                .orElseThrow(() -> new NoSuchElementException("Offering not found"));
+
+        if (!offering.getTeacher().getId().equals(teacherId)) {
+            throw new SecurityException("Teacher not authorized for this offering");
+        }
+
+        List<ClassSession> sessions = classSessionRepository.findAllByOffering_Id(offeringId);
+        ClassSession active = sessions.stream()
+                .filter(s -> s.getSessionEnd() == null)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No active session to end"));
+
+        active.setSessionEnd(Instant.now());
+
+        classSessionRepository.save(active);
     }
 }

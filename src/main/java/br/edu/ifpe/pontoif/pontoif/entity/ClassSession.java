@@ -2,13 +2,19 @@ package br.edu.ifpe.pontoif.pontoif.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.Instant;
 
 @Entity
 @Table(name = "class_sessions")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ClassSession {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "created_at", updatable = false)
@@ -21,7 +27,7 @@ public class ClassSession {
     @Column(name = "session_start", nullable = false)
     private Instant sessionStart;
 
-    @Column(name = "session_end", nullable = false)
+    @Column(name = "session_end")
     private Instant sessionEnd;
 
     @Column(name = "external_code")
@@ -29,6 +35,9 @@ public class ClassSession {
 
     private String notes;
 
-    @PrePersist void prePersist(){ if(createdAt==null) createdAt = Instant.now(); }
+    @PrePersist
+    void prePersist() {
+        if (createdAt == null) createdAt = Instant.now();
+    }
 }
 

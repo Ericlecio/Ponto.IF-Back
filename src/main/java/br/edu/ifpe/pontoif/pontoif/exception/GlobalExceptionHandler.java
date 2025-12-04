@@ -1,6 +1,5 @@
 package br.edu.ifpe.pontoif.pontoif.exception;
 
-
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
@@ -70,6 +69,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(404)
                 .body(body("Referenced entity not found.", 404));
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<?> handleFound(NotFoundException ex) {
+        System.err.println("[404] Internal server error: " + ex.getMessage());
+        return ResponseEntity
+                .status(404)
+                .body(body(ex.getMessage(), 500));
     }
 
     @ExceptionHandler(Exception.class)
