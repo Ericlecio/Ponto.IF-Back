@@ -2,6 +2,7 @@ package br.edu.ifpe.pontoif.pontoif.controller;
 
 import br.edu.ifpe.pontoif.pontoif.dto.SubjectDTO;
 import br.edu.ifpe.pontoif.pontoif.service.SubjectService;
+import br.edu.ifpe.pontoif.pontoif.service.SubjectOfferingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,6 +20,7 @@ import java.util.*;
 public class SubjectController {
 
     private final SubjectService service;
+    private final SubjectOfferingService subjectOfferingService;
 
     @Operation(summary = "Create a subject",
             responses = @ApiResponse(responseCode = "201"))
@@ -60,5 +62,23 @@ public class SubjectController {
         return service.delete(id)
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.notFound().build();
+    }
+
+    @Operation(summary = "Start class session for biometric validation.",
+            description = "Allows the teacher in charge to start the lesson. Creates an active session.")
+    @PostMapping("/offerings/{offeringId}/start")
+    public ResponseEntity<Void> startClass(@PathVariable Long offeringId,
+                                           @RequestParam UUID teacherId) {
+        subjectOfferingService.startClassSession(offeringId, teacherId);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "End class session",
+            description = "Allows the teacher in charge to end the active class session.")
+    @PostMapping("/offerings/{offeringId}/finalize")
+    public ResponseEntity<Void> finalizeClass(@PathVariable Long offeringId,
+                                              @RequestParam UUID teacherId) {
+        subjectOfferingService.endClassSession(offeringId, teacherId);
+        return ResponseEntity.noContent().build();
     }
 }
