@@ -17,7 +17,7 @@ public interface SubjectMapper {
 
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "courses", source = "courses")
+    @Mapping(target = "courses", ignore = true)
     Subject toEntity(SubjectDTO dto);
 
     @Mapping(target = "createdAt", ignore = true)

@@ -1,13 +1,16 @@
 package br.edu.ifpe.pontoif.pontoif.service;
 
 import br.edu.ifpe.pontoif.pontoif.dto.SubjectDTO;
+import br.edu.ifpe.pontoif.pontoif.entity.Course;
 import br.edu.ifpe.pontoif.pontoif.entity.Subject;
 import br.edu.ifpe.pontoif.pontoif.mapper.SubjectMapper;
+import br.edu.ifpe.pontoif.pontoif.repository.CourseRepository;
 import br.edu.ifpe.pontoif.pontoif.repository.SubjectRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -17,11 +20,17 @@ import java.util.UUID;
 public class SubjectService {
 
     private final SubjectRepository repository;
+    private final CourseRepository courseRepository;
     private final SubjectMapper mapper;
 
     @Transactional
     public SubjectDTO create(SubjectDTO dto) {
         Subject entity = mapper.toEntity(dto);
+        List<Course> courses = new ArrayList<>();
+        dto.getCourses().forEach(course -> {
+            courseRepository.findById(course).ifPresent(courses::add);
+        });
+        entity.setCourses(courses);
         repository.save(entity);
         return mapper.toDTO(entity);
     }
