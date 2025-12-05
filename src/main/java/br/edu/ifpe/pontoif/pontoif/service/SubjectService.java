@@ -12,10 +12,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -63,7 +60,8 @@ public class SubjectService {
             List<Course> courses = getCourses(dto);
             var existingCourses = existing.getCourses();
             existingCourses.addAll(courses);
-            existing.setCourses(existingCourses);
+            var toRemove = new HashSet<>(existingCourses);
+            existing.setCourses(toRemove.stream().toList());
             repository.save(existing);
             return mapper.toDTO(existing);
         });
