@@ -28,10 +28,7 @@ public class SubjectService {
     @Transactional
     public SubjectResponseDTO create(SubjectDTO dto) {
         Subject entity = mapper.toEntity(dto);
-        List<Course> courses = new ArrayList<>();
-        dto.getCourses().forEach(course -> {
-            courseRepository.findById(course).ifPresent(courses::add);
-        });
+        List<Course> courses = getCourses(dto);
         entity.setCourses(courses);
         repository.save(entity);
         return mapper.toDTO(entity);
@@ -63,10 +60,21 @@ public class SubjectService {
             existing.setName(dto.getName());
             existing.setCode(dto.getCode());
             existing.setDescription(dto.getDescription());
-
+            List<Course> courses = getCourses(dto);
+            var existingCourses = existing.getCourses();
+            existingCourses.addAll(courses);
+            existing.setCourses(existingCourses);
             repository.save(existing);
             return mapper.toDTO(existing);
         });
+    }
+
+    private List<Course> getCourses(SubjectDTO dto) {
+        List<Course> courses = new ArrayList<>();
+        dto.getCourses().forEach(course -> {
+            courseRepository.findById(course).ifPresent(courses::add);
+        });
+        return courses;
     }
 
     @Transactional
