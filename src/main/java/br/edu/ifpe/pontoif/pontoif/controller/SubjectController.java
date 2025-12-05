@@ -19,20 +19,20 @@ import java.util.*;
 @Tag(name = "Subjects", description = "API for subjects management")
 public class SubjectController {
 
-    private final SubjectService service;
+    private final SubjectService subjectService;
     private final SubjectOfferingService subjectOfferingService;
 
     @Operation(summary = "Create a subject",
             responses = @ApiResponse(responseCode = "201"))
     @PostMapping
     public ResponseEntity<SubjectDTO> create(@Valid @RequestBody SubjectDTO dto) {
-        return new ResponseEntity<>(service.create(dto), HttpStatus.CREATED);
+        return new ResponseEntity<>(subjectService.create(dto), HttpStatus.CREATED);
     }
 
     @Operation(summary = "List all subjects")
     @GetMapping
     public ResponseEntity<List<SubjectDTO>> list() {
-        return ResponseEntity.ok(service.getAll());
+        return ResponseEntity.ok(subjectService.getAll());
     }
 
     @Operation(summary = "Get subject by ID",
@@ -42,7 +42,7 @@ public class SubjectController {
             })
     @GetMapping("/{id}")
     public ResponseEntity<SubjectDTO> get(@PathVariable UUID id) {
-        return service.getById(id)
+        return subjectService.getById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -51,7 +51,7 @@ public class SubjectController {
     @PutMapping("/{id}")
     public ResponseEntity<SubjectDTO> update(@PathVariable UUID id,
                                              @Valid @RequestBody SubjectDTO dto) {
-        return service.update(id, dto)
+        return subjectService.update(id, dto)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -59,9 +59,15 @@ public class SubjectController {
     @Operation(summary = "Delete subject")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
-        return service.delete(id)
+        return subjectService.delete(id)
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.notFound().build();
+    }
+
+    @Operation(summary = "Get subjects from course ID")
+    @GetMapping("/course/{courseId}/")
+    public ResponseEntity<List<SubjectDTO>> getByCourse(@PathVariable UUID courseId) {
+        return ResponseEntity.ok(subjectService.getByCourse(courseId));
     }
 
     @Operation(summary = "Start class session for biometric validation.",

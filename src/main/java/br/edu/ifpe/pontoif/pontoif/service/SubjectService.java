@@ -38,6 +38,13 @@ public class SubjectService {
                 .map(mapper::toDTO);
     }
 
+    public List<SubjectDTO> getByCourse(UUID courseId){
+        return repository.findByCourses_Id(courseId)
+                .stream()
+                .map(mapper::toDTO)
+                .toList();
+    }
+
 
     @Transactional
     public Optional<SubjectDTO> update(UUID id, SubjectDTO dto) {
