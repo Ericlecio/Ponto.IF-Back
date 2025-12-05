@@ -1,6 +1,7 @@
 package br.edu.ifpe.pontoif.pontoif.mapper;
 
 import br.edu.ifpe.pontoif.pontoif.dto.SubjectDTO;
+import br.edu.ifpe.pontoif.pontoif.dto.SubjectResponseDTO;
 import br.edu.ifpe.pontoif.pontoif.entity.Course;
 import br.edu.ifpe.pontoif.pontoif.entity.Subject;
 import org.mapstruct.Mapper;
@@ -12,8 +13,7 @@ import java.util.UUID;
 @Mapper(componentModel = "spring")
 public interface SubjectMapper {
 
-    @Mapping(target = "courses", source = "courses")
-    SubjectDTO toDTO(Subject entity);
+    SubjectResponseDTO toDTO(Subject entity);
 
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "id", ignore = true)

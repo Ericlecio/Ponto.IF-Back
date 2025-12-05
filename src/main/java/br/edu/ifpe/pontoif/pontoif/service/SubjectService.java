@@ -1,10 +1,12 @@
 package br.edu.ifpe.pontoif.pontoif.service;
 
 import br.edu.ifpe.pontoif.pontoif.dto.SubjectDTO;
+import br.edu.ifpe.pontoif.pontoif.dto.SubjectResponseDTO;
 import br.edu.ifpe.pontoif.pontoif.entity.Course;
 import br.edu.ifpe.pontoif.pontoif.entity.Subject;
 import br.edu.ifpe.pontoif.pontoif.mapper.SubjectMapper;
 import br.edu.ifpe.pontoif.pontoif.repository.CourseRepository;
+import br.edu.ifpe.pontoif.pontoif.repository.SubjectOfferingRepository;
 import br.edu.ifpe.pontoif.pontoif.repository.SubjectRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +26,7 @@ public class SubjectService {
     private final SubjectMapper mapper;
 
     @Transactional
-    public SubjectDTO create(SubjectDTO dto) {
+    public SubjectResponseDTO create(SubjectDTO dto) {
         Subject entity = mapper.toEntity(dto);
         List<Course> courses = new ArrayList<>();
         dto.getCourses().forEach(course -> {
@@ -35,19 +37,19 @@ public class SubjectService {
         return mapper.toDTO(entity);
     }
 
-    public List<SubjectDTO> getAll() {
+    public List<SubjectResponseDTO> getAll() {
         return repository.findAll()
                 .stream()
                 .map(mapper::toDTO)
                 .toList();
     }
 
-    public Optional<SubjectDTO> getById(UUID id) {
+    public Optional<SubjectResponseDTO> getById(UUID id) {
         return repository.findById(id)
                 .map(mapper::toDTO);
     }
 
-    public List<SubjectDTO> getByCourse(UUID courseId){
+    public List<SubjectResponseDTO> getByCourse(UUID courseId){
         return repository.findByCourses_Id(courseId)
                 .stream()
                 .map(mapper::toDTO)
@@ -56,7 +58,7 @@ public class SubjectService {
 
 
     @Transactional
-    public Optional<SubjectDTO> update(UUID id, SubjectDTO dto) {
+    public Optional<SubjectResponseDTO> update(UUID id, SubjectDTO dto) {
         return repository.findById(id).map(existing -> {
             existing.setName(dto.getName());
             existing.setCode(dto.getCode());

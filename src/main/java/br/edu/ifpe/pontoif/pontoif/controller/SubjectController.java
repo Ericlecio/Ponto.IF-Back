@@ -1,6 +1,7 @@
 package br.edu.ifpe.pontoif.pontoif.controller;
 
 import br.edu.ifpe.pontoif.pontoif.dto.SubjectDTO;
+import br.edu.ifpe.pontoif.pontoif.dto.SubjectResponseDTO;
 import br.edu.ifpe.pontoif.pontoif.service.SubjectService;
 import br.edu.ifpe.pontoif.pontoif.service.SubjectOfferingService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,13 +26,13 @@ public class SubjectController {
     @Operation(summary = "Create a subject",
             responses = @ApiResponse(responseCode = "201"))
     @PostMapping
-    public ResponseEntity<SubjectDTO> create(@Valid @RequestBody SubjectDTO dto) {
+    public ResponseEntity<SubjectResponseDTO> create(@Valid @RequestBody SubjectDTO dto) {
         return new ResponseEntity<>(subjectService.create(dto), HttpStatus.CREATED);
     }
 
     @Operation(summary = "List all subjects")
     @GetMapping
-    public ResponseEntity<List<SubjectDTO>> list() {
+    public ResponseEntity<List<SubjectResponseDTO>> list() {
         return ResponseEntity.ok(subjectService.getAll());
     }
 
@@ -41,7 +42,7 @@ public class SubjectController {
                     @ApiResponse(responseCode = "404")
             })
     @GetMapping("/{id}")
-    public ResponseEntity<SubjectDTO> get(@PathVariable UUID id) {
+    public ResponseEntity<SubjectResponseDTO> get(@PathVariable UUID id) {
         return subjectService.getById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -49,7 +50,7 @@ public class SubjectController {
 
     @Operation(summary = "Update subject")
     @PutMapping("/{id}")
-    public ResponseEntity<SubjectDTO> update(@PathVariable UUID id,
+    public ResponseEntity<SubjectResponseDTO> update(@PathVariable UUID id,
                                              @Valid @RequestBody SubjectDTO dto) {
         return subjectService.update(id, dto)
                 .map(ResponseEntity::ok)
@@ -66,7 +67,7 @@ public class SubjectController {
 
     @Operation(summary = "Get subjects from course ID")
     @GetMapping("/course/{courseId}/")
-    public ResponseEntity<List<SubjectDTO>> getByCourse(@PathVariable UUID courseId) {
+    public ResponseEntity<List<SubjectResponseDTO>> getByCourse(@PathVariable UUID courseId) {
         return ResponseEntity.ok(subjectService.getByCourse(courseId));
     }
 
