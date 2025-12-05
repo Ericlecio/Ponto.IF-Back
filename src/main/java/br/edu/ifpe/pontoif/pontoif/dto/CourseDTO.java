@@ -13,6 +13,6 @@ import java.util.UUID;
 public class CourseDTO {
     private UUID id;
     private String name;
-    private String code;
+    private String acronym;
     private List<Subject> subjects;
 }

@@ -14,6 +14,7 @@ import java.util.Objects;
 public interface CourseMapper {
 
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(source = "acronym", target = "code")
     Course toEntity(CourseDTO dto);
 
     CourseDTO toDTO(Course entity);
@@ -26,6 +27,7 @@ public interface CourseMapper {
     }
 
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(source = "acronym", target = "code")
     void updateEntityFromDTO(CourseDTO dto, @MappingTarget Course entity);
 
     default UUID toId(Course course) {
