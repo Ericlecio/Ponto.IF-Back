@@ -17,6 +17,7 @@ public interface CourseMapper {
     @Mapping(source = "acronym", target = "code")
     Course toEntity(CourseDTO dto);
 
+    @Mapping(source = "code", target = "acronym")
     CourseDTO toDTO(Course entity);
 
     default Course fromId(UUID id) {

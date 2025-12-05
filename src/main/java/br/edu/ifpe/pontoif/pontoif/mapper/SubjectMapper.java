@@ -10,7 +10,7 @@ import org.mapstruct.MappingTarget;
 
 import java.util.UUID;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = { CourseMapper.class })
 public interface SubjectMapper {
 
     SubjectResponseDTO toDTO(Subject entity);

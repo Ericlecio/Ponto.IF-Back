@@ -58,12 +58,11 @@ public class SubjectService {
             existing.setCode(dto.getCode());
             existing.setDescription(dto.getDescription());
             List<Course> courses = getCourses(dto);
-            var existingCourses = existing.getCourses();
-            existingCourses.addAll(courses);
-            var toRemove = new HashSet<>(existingCourses);
-            existing.setCourses(toRemove.stream().toList());
-            repository.save(existing);
-            return mapper.toDTO(existing);
+            courses.addAll(existing.getCourses());
+            Set<Course> unique = new HashSet<>(courses);
+            existing.setCourses(new ArrayList<>(unique));
+            var result = repository.save(existing);
+            return mapper.toDTO(result);
         });
     }
 
