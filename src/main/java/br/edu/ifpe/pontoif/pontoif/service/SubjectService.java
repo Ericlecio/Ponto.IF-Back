@@ -1,5 +1,6 @@
 package br.edu.ifpe.pontoif.pontoif.service;
 
+import br.edu.ifpe.pontoif.pontoif.dto.CourseSubjectRequestDTO;
 import br.edu.ifpe.pontoif.pontoif.dto.SubjectDTO;
 import br.edu.ifpe.pontoif.pontoif.dto.SubjectResponseDTO;
 import br.edu.ifpe.pontoif.pontoif.entity.Course;
@@ -61,6 +62,28 @@ public class SubjectService {
             courses.addAll(existing.getCourses());
             Set<Course> unique = new HashSet<>(courses);
             existing.setCourses(new ArrayList<>(unique));
+            var result = repository.save(existing);
+            return mapper.toDTO(result);
+        });
+    }
+
+    @Transactional
+    public Optional<SubjectResponseDTO> addCourseInSubject(CourseSubjectRequestDTO dto) {
+        return repository.findById(dto.getSubjectId()).map(existing -> {
+            courseRepository.findById(dto.getCourseId()).ifPresent(course -> {
+                if (!existing.getCourses().contains(course)) {
+                    existing.getCourses().add(course);
+                }
+            });
+            var result = repository.save(existing);
+            return mapper.toDTO(result);
+        });
+    }
+
+    @Transactional
+    public Optional<SubjectResponseDTO> removeCourseInSubject(CourseSubjectRequestDTO dto) {
+        return repository.findById(dto.getSubjectId()).map(existing -> {
+            existing.getCourses().removeIf(course -> course.getId().equals(dto.getCourseId()));
             var result = repository.save(existing);
             return mapper.toDTO(result);
         });

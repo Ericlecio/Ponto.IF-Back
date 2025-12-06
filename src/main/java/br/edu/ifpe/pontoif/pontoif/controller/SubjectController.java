@@ -1,5 +1,6 @@
 package br.edu.ifpe.pontoif.pontoif.controller;
 
+import br.edu.ifpe.pontoif.pontoif.dto.CourseSubjectRequestDTO;
 import br.edu.ifpe.pontoif.pontoif.dto.SubjectDTO;
 import br.edu.ifpe.pontoif.pontoif.dto.SubjectResponseDTO;
 import br.edu.ifpe.pontoif.pontoif.service.SubjectService;
@@ -63,6 +64,22 @@ public class SubjectController {
         return subjectService.delete(id)
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.notFound().build();
+    }
+
+    @Operation(summary = "Add course in subject")
+    @PostMapping("/add-course")
+    public ResponseEntity<SubjectResponseDTO> addCourseInSubject(@RequestBody CourseSubjectRequestDTO dto) {
+        return subjectService.addCourseInSubject(dto)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @Operation(summary = "Remove course in subject")
+    @PostMapping("/add-course")
+    public ResponseEntity<SubjectResponseDTO> removeCourseInSubject(@RequestBody CourseSubjectRequestDTO dto) {
+        return subjectService.removeCourseInSubject(dto)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @Operation(summary = "Get subjects from course ID")
