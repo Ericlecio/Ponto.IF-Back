@@ -75,7 +75,7 @@ public class SubjectController {
     }
 
     @Operation(summary = "Remove course in subject")
-    @PostMapping("/add-course")
+    @PostMapping("/remove-course")
     public ResponseEntity<SubjectResponseDTO> removeCourseInSubject(@RequestBody CourseSubjectRequestDTO dto) {
         return subjectService.removeCourseInSubject(dto)
                 .map(ResponseEntity::ok)
