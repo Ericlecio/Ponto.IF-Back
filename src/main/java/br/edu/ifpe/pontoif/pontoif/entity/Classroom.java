@@ -14,7 +14,7 @@ public class Classroom {
     @Column(name = "created_at", updatable = false)
     private Instant createdAt;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "code")
     private String name;
 
     private String location;
