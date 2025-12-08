@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @Entity
 @Table(name = "classrooms")
@@ -14,8 +15,7 @@ import java.time.Instant;
 @Builder
 public class Classroom {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
+    private UUID id;
 
     @Column(name = "created_at", updatable = false)
     private Instant createdAt;
@@ -28,6 +28,7 @@ public class Classroom {
     @PrePersist
     void prePersist() {
         if (createdAt == null) createdAt = Instant.now();
+        if (id == null) id = UUID.randomUUID();
     }
 }
 
