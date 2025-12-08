@@ -14,12 +14,6 @@ import java.util.UUID;
 @Mapper(componentModel = "spring")
 public interface EnrollmentMapper {
 
-    default Enrollment fromId(UUID id) {
-        if (id == null) return null;
-        Enrollment e = new Enrollment();
-        e.setId(id);
-        return e;
-    }
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
