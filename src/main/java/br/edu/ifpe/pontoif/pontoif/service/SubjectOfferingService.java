@@ -28,7 +28,7 @@ public class SubjectOfferingService {
 
     public void create(SubjectOfferingDTO dto) {
 
-        CourseSubject cs = courseSubjectRepository.findById(dto.getCourseSubjectId())
+        CourseSubject cs = courseSubjectRepository.findByCurseIdAndSubjectId(dto.getCourseId(), dto.getSubjectId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid courseSubjectId"));
 
         Classroom classroom = classroomRepository.findById(dto.getClassroomId())
@@ -53,7 +53,7 @@ public class SubjectOfferingService {
 
         return offeringRepository.findById(id).map(existing -> {
 
-            CourseSubject cs = courseSubjectRepository.findById(dto.getCourseSubjectId())
+            CourseSubject cs = courseSubjectRepository.findByCurseIdAndSubjectId(dto.getCourseId(), dto.getSubjectId())
                     .orElseThrow(() -> new IllegalArgumentException("Invalid courseSubjectId"));
 
             Classroom classroom = classroomRepository.findById(dto.getClassroomId())

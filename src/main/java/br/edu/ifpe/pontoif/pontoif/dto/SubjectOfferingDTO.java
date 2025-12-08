@@ -10,7 +10,8 @@ import java.util.UUID;
 public class SubjectOfferingDTO {
     private Long id;
     private Instant createdAt;
-    private Long courseSubjectId;
+    private UUID courseId;
+    private UUID subjectId;
     private Long classroomId;
     private UUID teacherId;
     private String term;

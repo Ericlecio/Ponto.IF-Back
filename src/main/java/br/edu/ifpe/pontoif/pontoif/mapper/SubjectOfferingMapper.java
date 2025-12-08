@@ -7,12 +7,13 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring")
 public interface SubjectOfferingMapper {
 
-    @Mapping(source = "courseSubject.id", target = "courseSubjectId")
+    @Mapping(target = "courseId", source = "courseSubject.course.id")
+    @Mapping(target = "subjectId", source = "courseSubject.subject.id")
     @Mapping(source = "classroom.id", target = "classroomId")
     @Mapping(source = "teacher.id", target = "teacherId")
     SubjectOfferingDTO toDTO(SubjectOffering entity);
 
-    @Mapping(source = "courseSubjectId", target = "courseSubject")
+    @Mapping(target = "courseSubject", ignore = true)
     @Mapping(source = "classroomId", target = "classroom")
     @Mapping(source = "teacherId", target = "teacher")
     SubjectOffering toEntity(SubjectOfferingDTO dto);
