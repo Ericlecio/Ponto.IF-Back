@@ -8,7 +8,7 @@ import br.edu.ifpe.pontoif.pontoif.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.util.List;
+
 import java.util.UUID;
 
 @Mapper(componentModel = "spring")
@@ -27,16 +27,11 @@ public interface EnrollmentMapper {
 
     EnrollmentDTO toDTO(Enrollment entity);
 
-    default List<Enrollment> fromIdList(List<UUID> list) {
-        if (list == null) return null;
-        return list.stream().map(this::fromId).toList();
-    }
 
 
-
-
-    public default void updateEntityFromDTO(EnrollmentDTO dto, Enrollment entity,
-                                            SubjectOffering offering, User student) {
+    public default void updateEntityFromDTO(
+            EnrollmentDTO dto, Enrollment entity,
+            SubjectOffering offering, User student) {
 
         entity.setOffering(offering);
         entity.setStudent(student);

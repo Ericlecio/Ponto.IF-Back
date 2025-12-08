@@ -1,24 +1,16 @@
 package br.edu.ifpe.pontoif.pontoif.service;
 
 
-import br.edu.ifpe.pontoif.pontoif.dto.AttendanceDTO;
-import br.edu.ifpe.pontoif.pontoif.dto.CourseDTO;
 import br.edu.ifpe.pontoif.pontoif.dto.EnrollmentDTO;
 import br.edu.ifpe.pontoif.pontoif.entity.Enrollment;
 import br.edu.ifpe.pontoif.pontoif.entity.SubjectOffering;
 import br.edu.ifpe.pontoif.pontoif.entity.User;
 import br.edu.ifpe.pontoif.pontoif.mapper.EnrollmentMapper;
-import br.edu.ifpe.pontoif.pontoif.repository.CourseRepository;
 import br.edu.ifpe.pontoif.pontoif.repository.EnrollmentRepository;
 import br.edu.ifpe.pontoif.pontoif.repository.SubjectOfferingRepository;
 import br.edu.ifpe.pontoif.pontoif.repository.UserRepository;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Optional;
