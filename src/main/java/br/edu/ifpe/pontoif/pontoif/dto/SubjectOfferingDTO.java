@@ -12,7 +12,7 @@ public class SubjectOfferingDTO {
     private Instant createdAt;
     private UUID courseId;
     private UUID subjectId;
-    private Long classroomId;
+    private UUID classroomId;
     private UUID teacherId;
     private String term;
     private Map<String, Object> schedule;

@@ -4,6 +4,8 @@ import br.edu.ifpe.pontoif.pontoif.dto.SubjectOfferingDTO;
 import br.edu.ifpe.pontoif.pontoif.entity.*;
 import org.mapstruct.*;
 
+import java.util.UUID;
+
 @Mapper(componentModel = "spring")
 public interface SubjectOfferingMapper {
 
@@ -25,7 +27,7 @@ public interface SubjectOfferingMapper {
         return cs;
     }
 
-    default Classroom mapClassroom(Long id) {
+    default Classroom mapClassroom(UUID id) {
         if (id == null) return null;
         Classroom c = new Classroom();
         c.setId(id);
