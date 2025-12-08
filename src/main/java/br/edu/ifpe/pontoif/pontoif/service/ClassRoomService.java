@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +25,7 @@ public class ClassRoomService {
         return classRoomMapper.toDTO(savedEntity);
     }
 
-    public ClassRoomResponseDTO update(Long id, ClassRoomRequestDTO dto) {
+    public ClassRoomResponseDTO update(UUID id, ClassRoomRequestDTO dto) {
         Classroom existingEntity = classroomRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Classroom not found with id: " + id));
 
@@ -33,14 +34,14 @@ public class ClassRoomService {
         return classRoomMapper.toDTO(updatedEntity);
     }
 
-    public void delete(Long id) {
+    public void delete(UUID id) {
         if (!classroomRepository.existsById(id)) {
             throw new NotFoundException("Classroom not found with id: " + id);
         }
         classroomRepository.deleteById(id);
     }
 
-    public ClassRoomResponseDTO findById(Long id) {
+    public ClassRoomResponseDTO findById(UUID id) {
         return classroomRepository.findById(id)
                 .map(classRoomMapper::toDTO)
                 .orElseThrow(() -> new NotFoundException("Classroom not found with id: " + id));

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/classrooms")
@@ -25,19 +26,19 @@ public class ClassRoomController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ClassRoomResponseDTO> update(@PathVariable Long id, @Valid @RequestBody ClassRoomRequestDTO dto) {
+    public ResponseEntity<ClassRoomResponseDTO> update(@PathVariable UUID id, @Valid @RequestBody ClassRoomRequestDTO dto) {
         ClassRoomResponseDTO updatedDto = classRoomService.update(id, dto);
         return ResponseEntity.ok(updatedDto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         classRoomService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ClassRoomResponseDTO> findById(@PathVariable Long id) {
+    public ResponseEntity<ClassRoomResponseDTO> findById(@PathVariable UUID id) {
         ClassRoomResponseDTO dto = classRoomService.findById(id);
         return ResponseEntity.ok(dto);
     }
