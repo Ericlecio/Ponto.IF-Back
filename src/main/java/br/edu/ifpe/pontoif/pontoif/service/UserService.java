@@ -25,7 +25,7 @@ public class UserService {
 
     public List<UserDTO> getTeachers() {
         return userRepository
-                .findByRole(Role.TEACHER)
+                .findByRole(Role.PROFESSOR)
                 .stream()
                 .map(userMapper::toDTO)
                 .toList();
@@ -33,7 +33,7 @@ public class UserService {
 
     public Optional<UserDTO> getTeacherById(UUID id) {
         return userRepository
-                .findByIdAndRole(id, Role.TEACHER)
+                .findByIdAndRole(id, Role.PROFESSOR)
                 .map(userMapper::toDTO);
     }
 

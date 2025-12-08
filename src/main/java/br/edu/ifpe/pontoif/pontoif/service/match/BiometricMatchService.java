@@ -64,7 +64,7 @@ public class BiometricMatchService {
     }
 
     public Optional<Biometric> findTeacherMatch(byte[] sampleTemplate) {
-        return findMatchByRole(sampleTemplate, Role.TEACHER);
+        return findMatchByRole(sampleTemplate, Role.PROFESSOR);
     }
 
     public Optional<Biometric> findStudentMatch(byte[] sampleTemplate) {
