@@ -2,13 +2,19 @@ package br.edu.ifpe.pontoif.pontoif.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.Instant;
 
 @Entity
 @Table(name = "classrooms")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Classroom {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(name = "created_at", updatable = false)
@@ -19,6 +25,9 @@ public class Classroom {
 
     private String location;
 
-    @PrePersist void prePersist(){ if(createdAt==null) createdAt = Instant.now(); }
+    @PrePersist
+    void prePersist() {
+        if (createdAt == null) createdAt = Instant.now();
+    }
 }
 
