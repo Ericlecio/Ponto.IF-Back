@@ -44,7 +44,7 @@ public class EnrollmentService {
 
         return enrollmentRepository.findById(id).map(existing -> {
 
-            SubjectOffering offering = offeringRepository.findById(dto.getSubjctOfferingId())
+            SubjectOffering offering = offeringRepository.findById(dto.getSubjectOfferingId())
                     .orElseThrow(() -> new RuntimeException("Offering not found"));
 
             User student = userRepository.findById(dto.getStudentId())

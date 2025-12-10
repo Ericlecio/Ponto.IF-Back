@@ -2,6 +2,7 @@ package br.edu.ifpe.pontoif.pontoif.controller;
 
 import br.edu.ifpe.pontoif.pontoif.dto.SubjectOfferingDTO;
 import br.edu.ifpe.pontoif.pontoif.dto.UserDTO;
+import br.edu.ifpe.pontoif.pontoif.entity.Role;
 import br.edu.ifpe.pontoif.pontoif.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class UserController {
 
     @GetMapping("/teacher")
     public ResponseEntity<List<UserDTO>> getTeacher() {
-        return ResponseEntity.ok(userService.getTeachers());
+        return ResponseEntity.ok(userService.getUser(Role.PROFESSOR));
     }
 
     @GetMapping("/teacher/{id}")
@@ -37,5 +38,10 @@ public class UserController {
     @GetMapping("/teachers/{id}/offerings")
     public ResponseEntity<List<SubjectOfferingDTO>> getTeacherOfferings(UUID id) {
         return ResponseEntity.ok(userService.getTeacherOfferings(id));
+    }
+
+    @GetMapping("/students")
+    public ResponseEntity<List<UserDTO>> getStudent() {
+        return ResponseEntity.ok(userService.getUser(Role.STUDENT));
     }
 }

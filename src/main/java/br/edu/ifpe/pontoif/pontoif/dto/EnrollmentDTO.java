@@ -12,5 +12,5 @@ public class EnrollmentDTO {
     private UUID enrollmentId;
     private UUID studentId;
     private EnrollmentStatus status;
-    private Long subjctOfferingId;
+    private Long subjectOfferingId;
 }

@@ -14,16 +14,18 @@ import java.util.UUID;
 @Mapper(componentModel = "spring")
 public interface EnrollmentMapper {
 
-
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "offering.id", source = "subjectOfferingId")
+    @Mapping(target = "student.id", source = "studentId")
     Enrollment toEntity(EnrollmentDTO dto);
 
+    @Mapping(target = "enrollmentId", source = "id")
+    @Mapping(target = "studentId", source = "student.id")
+    @Mapping(target = "subjectOfferingId", source = "offering.id")
     EnrollmentDTO toDTO(Enrollment entity);
 
-
-
-    public default void updateEntityFromDTO(
+    default void updateEntityFromDTO(
             EnrollmentDTO dto, Enrollment entity,
             SubjectOffering offering, User student) {
 

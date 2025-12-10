@@ -23,9 +23,9 @@ public class UserService {
     private final SubjectOfferingMapper offeringMapper;
     private final UserMapper userMapper;
 
-    public List<UserDTO> getTeachers() {
+    public List<UserDTO> getUser(Role role) {
         return userRepository
-                .findByRole(Role.PROFESSOR)
+                .findByRole(role)
                 .stream()
                 .map(userMapper::toDTO)
                 .toList();

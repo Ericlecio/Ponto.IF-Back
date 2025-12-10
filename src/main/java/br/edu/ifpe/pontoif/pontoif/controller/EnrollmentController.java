@@ -17,7 +17,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class EnrollmentController {
 
-    private EnrollmentService enrollmentService;
+    private final EnrollmentService enrollmentService;
 
     @PostMapping
     public ResponseEntity<EnrollmentDTO> registerEnrollment(@Valid @RequestBody EnrollmentDTO dto) {
