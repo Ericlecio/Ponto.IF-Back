@@ -37,6 +37,11 @@ public class EnrollmentController {
         return ResponseEntity.ok(enrollmentService.getAllEnrollment());
     }
 
+    @GetMapping("student/{id}")
+    public ResponseEntity<List<EnrollmentDTO>> getStudentEnrollments(@PathVariable UUID id) {
+        return ResponseEntity.ok(enrollmentService.getByStudentId(id));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<EnrollmentDTO> update(
             @PathVariable UUID id,

@@ -58,6 +58,13 @@ public class EnrollmentService {
         });
     }
 
+    public List<EnrollmentDTO> getByStudentId(UUID studentID){
+        return enrollmentRepository.getEnrollmentByStudent_Id(studentID)
+                .stream()
+                .map(enrollmentMapper::toDTO)
+                .toList();
+    }
+
 
     public boolean delete(final UUID id) {
         return enrollmentRepository.findById(id).map(enrollment -> {
