@@ -31,6 +31,12 @@ public class UserService {
                 .toList();
     }
 
+    public Optional<UserDTO> getStudentById(UUID id) {
+        return userRepository
+                .findByIdAndRole(id,Role.STUDENT)
+                .map(userMapper::toDTO);
+    }
+
     public Optional<UserDTO> getTeacherById(UUID id) {
         return userRepository
                 .findByIdAndRole(id, Role.PROFESSOR)

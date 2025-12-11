@@ -35,6 +35,13 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/student/{id}")
+    public ResponseEntity<UserDTO> getStudentById(@PathVariable UUID id) {
+        return userService.getStudentById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/teachers/{id}/offerings")
     public ResponseEntity<List<SubjectOfferingDTO>> getTeacherOfferings(UUID id) {
         return ResponseEntity.ok(userService.getTeacherOfferings(id));
