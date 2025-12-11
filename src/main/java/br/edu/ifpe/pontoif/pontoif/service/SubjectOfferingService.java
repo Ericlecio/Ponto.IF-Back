@@ -1,8 +1,10 @@
 package br.edu.ifpe.pontoif.pontoif.service;
 
+import br.edu.ifpe.pontoif.pontoif.dto.EnrollmentDTO;
 import br.edu.ifpe.pontoif.pontoif.dto.SubjectOfferingDTO;
 import br.edu.ifpe.pontoif.pontoif.entity.*;
 import br.edu.ifpe.pontoif.pontoif.exception.NotFoundException;
+import br.edu.ifpe.pontoif.pontoif.mapper.EnrollmentMapper;
 import br.edu.ifpe.pontoif.pontoif.mapper.SubjectOfferingMapper;
 import br.edu.ifpe.pontoif.pontoif.repository.*;
 import jakarta.transaction.Transactional;
@@ -23,6 +25,8 @@ public class SubjectOfferingService {
     private final EnrollmentRepository enrollmentRepository;
     private final ClassSessionRepository classSessionRepository;
     private final AttendanceRecordRepository attendanceRecordRepository;
+
+    private final EnrollmentMapper enrollmentMapper;
 
     private final SubjectOfferingMapper mapper;
 
@@ -95,8 +99,12 @@ public class SubjectOfferingService {
                 .orElse(false);
     }
 
-    public List<Enrollment> getEnrollments(Long offeringId) {
-        return enrollmentRepository.findAllByOffering_Id(offeringId);
+    public List<EnrollmentDTO> getEnrollmentsByOffering(Long offeringId) {
+        return enrollmentRepository.findAllByOffering_Id(offeringId)
+                .stream()
+                .map(enrollmentMapper::toDTO)
+                .toList()
+                ;
     }
 
     public List<AttendanceRecord> getAttendance(Long offeringId) {

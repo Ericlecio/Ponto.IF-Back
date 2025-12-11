@@ -1,5 +1,6 @@
 package br.edu.ifpe.pontoif.pontoif.controller;
 
+import br.edu.ifpe.pontoif.pontoif.dto.EnrollmentDTO;
 import br.edu.ifpe.pontoif.pontoif.dto.SubjectOfferingDTO;
 import br.edu.ifpe.pontoif.pontoif.entity.AttendanceRecord;
 import br.edu.ifpe.pontoif.pontoif.entity.Enrollment;
@@ -96,8 +97,8 @@ public class SubjectOfferingController {
             description = "Returns all students enrolled in a given offering"
     )
     @GetMapping("/{id}/enrollments")
-    public ResponseEntity<List<Enrollment>> enrollments(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getEnrollments(id));
+    public ResponseEntity<List<EnrollmentDTO>> getEnrollmentsByOffering(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getEnrollmentsByOffering(id));
     }
 
     @Operation(
