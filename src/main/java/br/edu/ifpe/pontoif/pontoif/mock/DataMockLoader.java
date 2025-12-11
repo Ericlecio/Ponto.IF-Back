@@ -134,7 +134,7 @@ public class DataMockLoader {
         ClassSession session = ClassSession.builder()
                 .offering(offering)
                 .sessionStart(Instant.now().minusSeconds(3600))
-                .sessionEnd(Instant.now())
+                .sessionEnd(Instant.now().plusSeconds(3600))
                 .notes("Primeira aula do semestre")
                 .build();
         classSessionRepository.save(session);

@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -18,19 +20,20 @@ public class ClassSessionService {
 
     public SessionResponseDTO getActualSessionId(Long offeringId) {
         log.info("Fetching actual session ID for offering ID: {}", offeringId);
+        Instant now = Instant.now();
         return classSessionRepository.findAllByOffering_Id(offeringId).stream()
-                .filter(session -> session.getSessionStart().isBefore(java.time.Instant.now().minusNanos(-180)) &&
-                                   (session.getSessionEnd() == null || session.getSessionEnd().isAfter(java.time.Instant.now())))
+                .filter(session ->
+                        session.getSessionStart().isBefore(now) &&
+                                (session.getSessionEnd() == null || session.getSessionEnd().isAfter(now))
+                )
                 .findFirst()
                 .map(session -> {
                     log.info("Found actual session ID: {} for offering ID: {}", session.getId(), offeringId);
                     return mapper.toDTO(session);
                 })
-                .orElseThrow(
-                        () -> {
-                            log.warn("No actual session found for offering ID: {}", offeringId);
-                            return new NotFoundException("No actual session found for the given offering ID");
-                        }
-                );
+                .orElseThrow(() -> {
+                    log.warn("No actual session found for offering ID: {}", offeringId);
+                    return new NotFoundException("No actual session found for the given offering ID");
+                });
     }
 }
