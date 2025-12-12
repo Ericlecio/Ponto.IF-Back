@@ -10,4 +10,5 @@ import java.util.UUID;
 @Repository
 public interface SubjectOfferingRepository extends JpaRepository<SubjectOffering, Long> {
     List<SubjectOffering> findAllByTeacher_Id(UUID teacherId);
+    List<SubjectOffering> findAllByCourseSubject_Course_Id(UUID courseId);
 }

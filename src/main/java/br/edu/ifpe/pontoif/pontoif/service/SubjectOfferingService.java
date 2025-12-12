@@ -24,6 +24,7 @@ public class SubjectOfferingService {
     private final UserRepository userRepository;
     private final EnrollmentRepository enrollmentRepository;
     private final ClassSessionRepository classSessionRepository;
+    private final SubjectOfferingRepository subjectOfferingRepository;
     private final AttendanceRecordRepository attendanceRecordRepository;
 
     private final EnrollmentMapper enrollmentMapper;
@@ -118,6 +119,13 @@ public class SubjectOfferingService {
                                 .findAllBySession_Id(session.getId())
                                 .stream()
                 )
+                .toList();
+    }
+
+    public List<SubjectOfferingDTO> getOfferingsByCourse(UUID courseId) {
+        return subjectOfferingRepository.findAllByCourseSubject_Course_Id(courseId)
+                .stream()
+                .map(mapper::toDTO)
                 .toList();
     }
 

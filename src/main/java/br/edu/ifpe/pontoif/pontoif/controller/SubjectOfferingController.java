@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/offerings")
@@ -108,5 +109,14 @@ public class SubjectOfferingController {
     @GetMapping("/{id}/attendance")
     public ResponseEntity<List<AttendanceRecord>> attendance(@PathVariable Long id) {
         return ResponseEntity.ok(service.getAttendance(id));
+    }
+
+    @Operation(
+            summary = "List Offering by a course Id",
+            description = "List all offering linked a course"
+    )
+    @GetMapping("/course/{id}")
+    public ResponseEntity<List<SubjectOfferingDTO>> getAllOfferingByCourse(UUID id) {
+        return ResponseEntity.ok(service.getOfferingsByCourse(id));
     }
 }
