@@ -4,6 +4,7 @@ import br.edu.ifpe.pontoif.pontoif.dto.*;
 import br.edu.ifpe.pontoif.pontoif.entity.*;
 import br.edu.ifpe.pontoif.pontoif.mapper.BiometricMapper;
 import br.edu.ifpe.pontoif.pontoif.repository.BiometricRepository;
+import br.edu.ifpe.pontoif.pontoif.repository.UserRepository;
 import br.edu.ifpe.pontoif.pontoif.service.match.BiometricMatchService;
 import com.machinezoo.sourceafis.*;
 import jakarta.transaction.Transactional;
@@ -21,6 +22,7 @@ public class BiometricService {
     private final BiometricMapper biometricMapper;
     private final BiometricMatchService biometricMatchService;
     private final TokenService tokenService;
+    private final UserRepository userRepository;
 
     @Transactional
     public void insertBiometric(final BiometricDTO biometricDTO) {
@@ -29,6 +31,9 @@ public class BiometricService {
                 throw new IllegalArgumentException("Missing biometric image.");
             }
 
+            User user = userRepository.findById(biometricDTO.getUser())
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
             FingerprintTemplate tpl = new FingerprintTemplate(
                     new FingerprintImage(biometricDTO.getImage())
             );
@@ -36,6 +41,7 @@ public class BiometricService {
 
             Biometric entity = biometricMapper.toEntity(biometricDTO);
             entity.setTemplate(serialized);
+            entity.setUser(user);
 
             biometricRepository.save(entity);
             log.info("Template saved successfully  ({} bytes)", serialized.length);
