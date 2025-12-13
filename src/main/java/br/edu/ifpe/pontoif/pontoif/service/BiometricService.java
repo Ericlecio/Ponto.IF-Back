@@ -11,6 +11,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.time.Instant;
 import java.util.*;
 
 @Slf4j
@@ -23,6 +25,7 @@ public class BiometricService {
     private final BiometricMatchService biometricMatchService;
     private final TokenService tokenService;
     private final UserRepository userRepository;
+    private final AttendanceService attendanceService;
 
     @Transactional
     public void insertBiometric(final BiometricDTO biometricDTO) {
@@ -90,10 +93,40 @@ public class BiometricService {
 
         byte[] sampleTemplate = tpl.toByteArray();
 
-        return biometricMatchService.findBestMatch(
-                sampleTemplate,
-                dto.getRole(),
-                dto.getSessionId()
+        Optional<BiometricMatchResultDTO> match =
+                biometricMatchService.findBestMatch(
+                        sampleTemplate,
+                        dto.getRole(),
+                        dto.getSessionId()
+                );
+
+        match.ifPresent(result ->
+                registerAttendance(result, dto.getSessionId())
+        );
+
+        return match;
+    }
+
+
+    private void registerAttendance(
+            BiometricMatchResultDTO match,
+            Long sessionId
+    ) {
+
+        AttendanceDTO attendance = new AttendanceDTO();
+        attendance.setSessionId(sessionId);
+        attendance.setStudentId(match.getStudentId());
+        attendance.setConfidence(match.getScore());
+        attendance.setStatus(AttendanceStatus.PRESENT);
+        attendance.setRecordedAt(Instant.now());
+
+        attendanceService.registerAttendance(attendance);
+
+        log.info(
+                "✅ Attendance registered → student={} session={} score={}",
+                match.getStudentId(),
+                sessionId,
+                match.getScore()
         );
     }
 

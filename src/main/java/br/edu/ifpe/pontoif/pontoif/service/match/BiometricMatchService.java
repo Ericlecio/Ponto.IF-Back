@@ -41,37 +41,45 @@ public class BiometricMatchService {
             return Optional.empty();
         }
 
-        return candidates.stream()
-                .map(b ->
-                        afisMatchService
-                                .calculateScoreSafe(
-                                        b.getTemplate(),
-                                        sampleTemplate
-                                )
-                                .map(score -> new MatchResult(b, score))
-                )
-                .flatMap(Optional::stream)
-                .filter(r -> r.score() > 50) // threshold realista
-                .max(Comparator.comparingDouble(MatchResult::score))
-                .map(best -> {
-                    Biometric biometric = best.biometric();
+        MatchResult best =
+                candidates.stream()
+                        .map(b ->
+                                afisMatchService
+                                        .calculateScoreSafe(
+                                                b.getTemplate(),
+                                                sampleTemplate
+                                        )
+                                        .map(score -> new MatchResult(b, score))
+                        )
+                        .flatMap(Optional::stream)
+                        .max(Comparator.comparingDouble(MatchResult::score))
+                        .orElseThrow();
 
-                    log.info(
-                            "🔍 Match OK → user={} score={} session={}",
-                            biometric.getUser().getName(),
-                            best.score(),
-                            sessionId
-                    );
+        if (best.score() < 50) {
+            log.warn(
+                    "❌ Biometric rejected → user={} score={} session={}",
+                    best.biometric().getUser().getName(),
+                    best.score(),
+                    sessionId
+            );
+            throw new RuntimeException("Low score: " + best.score());
+        }
 
-                    BiometricMatchResultDTO dto =
-                            new BiometricMatchResultDTO();
+        log.info(
+                "✅ Biometric accepted → user={} score={} session={}",
+                best.biometric().getUser().getName(),
+                best.score(),
+                sessionId
+        );
 
-                    dto.setBiometricId(biometric.getId());
-                    dto.setStudentId(biometric.getUser().getId());
-                    dto.setScore(best.score());
+        Biometric biometric = best.biometric();
 
-                    return dto;
-                });
+        BiometricMatchResultDTO dto = new BiometricMatchResultDTO();
+        dto.setBiometricId(biometric.getId());
+        dto.setStudentId(biometric.getUser().getId());
+        dto.setScore(best.score());
+
+        return Optional.of(dto);
     }
 
     /**
