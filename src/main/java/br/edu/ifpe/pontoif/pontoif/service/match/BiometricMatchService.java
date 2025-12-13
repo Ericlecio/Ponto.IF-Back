@@ -22,30 +22,14 @@ public class BiometricMatchService {
     private final BiometricRepository biometricRepository;
     private final SourceAfisMatchService afisMatchService;
 
-    public Optional<Biometric> findMatchByRole(byte[] sampleTemplate, Role role) {
-        List<Biometric> candidates = biometricRepository.findAllByUser_Role(role);
-
-        if (candidates.isEmpty()) {
-            log.warn("⚠️ No biometric candidates found for role: {}", role);
-            return Optional.empty();
-        }
-
-        return candidates.stream()
-                .filter(b -> b.getTemplate() != null && b.getUser() != null)
-                .map(b -> new MatchResult(b, afisMatchService.calculateScore(b.getTemplate(), sampleTemplate)))
-                .filter(r -> r.score() > 50)
-                .max(Comparator.comparingDouble(MatchResult::score))
-                .map(best -> {
-                    log.info("🔎 Best match for role {} → user={} (score={})",
-                            role, best.biometric().getUser().getName(), best.score());
-                    return best.biometric();
-                });
-    }
-
+    /**
+     * Match biométrico considerando sessão e role.
+     */
     public Optional<BiometricMatchResultDTO> findBestMatch(
             byte[] sampleTemplate,
             Role role,
-            Long sessionId) {
+            Long sessionId
+    ) {
 
         List<Biometric> candidates =
                 biometricRepository.findBiometricsBySessionAndRole(
@@ -58,27 +42,67 @@ public class BiometricMatchService {
         }
 
         return candidates.stream()
-                .map(b -> new MatchResult(
-                        b,
-                        afisMatchService.calculateScore(b.getTemplate(), sampleTemplate)
-                ))
+                .map(b ->
+                        afisMatchService
+                                .calculateScoreSafe(
+                                        b.getTemplate(),
+                                        sampleTemplate
+                                )
+                                .map(score -> new MatchResult(b, score))
+                )
+                .flatMap(Optional::stream)
                 .filter(r -> r.score() > 50) // threshold realista
                 .max(Comparator.comparingDouble(MatchResult::score))
                 .map(best -> {
                     Biometric biometric = best.biometric();
-                    double score = best.score();
 
-                    log.info("🔍 Match OK → user={} score={} session={}",
+                    log.info(
+                            "🔍 Match OK → user={} score={} session={}",
                             biometric.getUser().getName(),
-                            score,
-                            sessionId);
+                            best.score(),
+                            sessionId
+                    );
 
-                    BiometricMatchResultDTO dto = new BiometricMatchResultDTO();
+                    BiometricMatchResultDTO dto =
+                            new BiometricMatchResultDTO();
+
                     dto.setBiometricId(biometric.getId());
                     dto.setStudentId(biometric.getUser().getId());
-                    dto.setScore(score);
+                    dto.setScore(best.score());
+
                     return dto;
                 });
+    }
+
+    /**
+     * Match genérico por role (sem sessão).
+     */
+    public Optional<Biometric> findMatchByRole(
+            byte[] sampleTemplate,
+            Role role
+    ) {
+
+        List<Biometric> candidates =
+                biometricRepository.findAllByUser_Role(role);
+
+        if (candidates.isEmpty()) {
+            log.warn("⚠️ No biometric candidates found for role: {}", role);
+            return Optional.empty();
+        }
+
+        return candidates.stream()
+                .map(b ->
+                        afisMatchService
+                                .calculateScoreSafe(
+                                        b.getTemplate(),
+                                        sampleTemplate
+                                )
+                                .map(score -> new MatchResult(b, score))
+                )
+                .flatMap(Optional::stream)
+                .filter(r -> r.score() > 50)
+                .max(Comparator.comparingDouble(MatchResult::score))
+                .map(best -> best.biometric());
     }
 
     public Optional<Biometric> findTeacherMatch(byte[] sampleTemplate) {

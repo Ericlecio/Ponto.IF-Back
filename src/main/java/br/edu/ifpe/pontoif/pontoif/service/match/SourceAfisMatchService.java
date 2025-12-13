@@ -4,20 +4,36 @@ import com.machinezoo.sourceafis.FingerprintMatcher;
 import com.machinezoo.sourceafis.FingerprintTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class SourceAfisMatchService {
-
-    public double calculateScore(byte[] storedTemplate, byte[] sampleTemplate) {
+    public Optional<Double> calculateScoreSafe(
+            byte[] storedTemplate,
+            byte[] sampleTemplate
+    ) {
         try {
-            FingerprintTemplate probe = new FingerprintTemplate(storedTemplate);
-            FingerprintTemplate candidate = new FingerprintTemplate(sampleTemplate);
-            double score = new FingerprintMatcher(probe).match(candidate);
-            return score;
+            if (storedTemplate == null || storedTemplate.length < 100) {
+                return Optional.empty();
+            }
+
+            if (sampleTemplate == null || sampleTemplate.length < 100) {
+                return Optional.empty();
+            }
+
+            FingerprintTemplate probe =
+                    new FingerprintTemplate(sampleTemplate);
+
+            FingerprintTemplate candidate =
+                    new FingerprintTemplate(storedTemplate);
+
+            double score =
+                    new FingerprintMatcher(probe).match(candidate);
+
+            return Optional.of(score);
 
         } catch (Exception e) {
-            System.err.println("Error in score calculation:" + e.getMessage());
-            e.printStackTrace();
-            return 0.0;
+            return Optional.empty();
         }
     }
 }
