@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/biometry")
+@RequestMapping("/api/biometric")
 @RequiredArgsConstructor
 public class BiometryMatchController {
 

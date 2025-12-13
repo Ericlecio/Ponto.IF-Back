@@ -78,46 +78,24 @@ public class BiometricService {
     }
 
     @Transactional
-    public Optional<BiometricMatchResultDTO> matchSample(final BiometricSampleDTO dto) {
-        try {
-            if (dto.getImage() == null || dto.getImage().length == 0) {
-                throw new IllegalArgumentException("Missing biometric image.");
-            }
+    public Optional<BiometricMatchResultDTO> matchSample(BiometricSampleDTO dto) {
 
-            FingerprintTemplate sampleTemplate = new FingerprintTemplate(
-                    new FingerprintImage(dto.getImage())
-            );
-
-            Optional<BiometricMatchResultDTO> matchOpt =
-                    biometricMatchService.findBestMatch(sampleTemplate.toByteArray());
-
-            matchOpt.ifPresent(matchResult -> {
-                biometricRepository.findById(matchResult.getBiometricId())
-                        .ifPresent(this::processMatchedBiometric);
-            });
-
-            return matchOpt;
-
-        } catch (Exception e) {
-            log.error("Error generating SourceAFIS template from image: {}", e.getMessage(), e);
-            return Optional.empty();
+        if (dto.getImage() == null || dto.getImage().length == 0) {
+            throw new IllegalArgumentException("Missing biometric image.");
         }
-    }
 
-    private Biometric processMatchedBiometric(Biometric biometric) {
-//        lessonService.getCurrentLesson(biometric.getUser())
-//                .ifPresent(lesson ->
-//                        recordService.insertRecord(createRecordDTO(biometric, lesson)));
-//        return biometric;
-        return null;
-    }
+        FingerprintTemplate tpl = new FingerprintTemplate(
+                new FingerprintImage(dto.getImage())
+        );
 
-//    private RecordDTO createRecordDTO(Biometric biometric, Lesson lesson) {
-//        RecordDTO dto = new RecordDTO();
-//        dto.setUser(biometric.getUser().getId());
-//        dto.setLesson(lesson.getId());
-//        return null;
-//    }
+        byte[] sampleTemplate = tpl.toByteArray();
+
+        return biometricMatchService.findBestMatch(
+                sampleTemplate,
+                dto.getRole(),
+                dto.getSessionId()
+        );
+    }
 
 
     public List<BiometricDTO> getAllBiometrics() {

@@ -4,6 +4,7 @@ import br.edu.ifpe.pontoif.pontoif.dto.BiometricMatchResultDTO;
 import br.edu.ifpe.pontoif.pontoif.entity.Biometric;
 import br.edu.ifpe.pontoif.pontoif.entity.Role;
 import br.edu.ifpe.pontoif.pontoif.repository.BiometricRepository;
+import com.machinezoo.sourceafis.FingerprintTemplate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -40,20 +42,36 @@ public class BiometricMatchService {
                 });
     }
 
-    public Optional<BiometricMatchResultDTO> findBestMatch(byte[] sampleTemplate) {
-        List<Biometric> candidates = biometricRepository.findAll();
+    public Optional<BiometricMatchResultDTO> findBestMatch(
+            byte[] sampleTemplate,
+            Role role,
+            Long sessionId) {
+
+        List<Biometric> candidates =
+                biometricRepository.findBiometricsBySessionAndRole(
+                        sessionId, role
+                );
+
+        if (candidates.isEmpty()) {
+            log.warn("⚠️ No candidates for role={} session={}", role, sessionId);
+            return Optional.empty();
+        }
 
         return candidates.stream()
-                .filter(b -> b.getTemplate() != null && b.getUser() != null)
-                .map(b -> new MatchResult(b, afisMatchService.calculateScore(b.getTemplate(), sampleTemplate)))
-                .filter(r -> r.score() > 0)
+                .map(b -> new MatchResult(
+                        b,
+                        afisMatchService.calculateScore(b.getTemplate(), sampleTemplate)
+                ))
+                .filter(r -> r.score() > 50) // threshold realista
                 .max(Comparator.comparingDouble(MatchResult::score))
                 .map(best -> {
                     Biometric biometric = best.biometric();
                     double score = best.score();
 
-                    log.info("🔍 Best global match → user={} (score={})",
-                            biometric.getUser().getName(), score);
+                    log.info("🔍 Match OK → user={} score={} session={}",
+                            biometric.getUser().getName(),
+                            score,
+                            sessionId);
 
                     BiometricMatchResultDTO dto = new BiometricMatchResultDTO();
                     dto.setBiometricId(biometric.getId());

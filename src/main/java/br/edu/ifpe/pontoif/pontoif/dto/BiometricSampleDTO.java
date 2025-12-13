@@ -10,4 +10,5 @@ import lombok.Setter;
 public class BiometricSampleDTO {
     private Role role;
     private byte[] image;
+    private Long sessionId;
 }
