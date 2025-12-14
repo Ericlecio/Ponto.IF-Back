@@ -1,6 +1,7 @@
 package br.edu.ifpe.pontoif.pontoif.service;
 
 import br.edu.ifpe.pontoif.pontoif.dto.SessionResponseDTO;
+import br.edu.ifpe.pontoif.pontoif.entity.ClassSession;
 import br.edu.ifpe.pontoif.pontoif.exception.NotFoundException;
 import br.edu.ifpe.pontoif.pontoif.mapper.ClassSessionMapper;
 import br.edu.ifpe.pontoif.pontoif.repository.ClassSessionRepository;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -36,4 +38,13 @@ public class ClassSessionService {
                     return new NotFoundException("No actual session found for the given offering ID");
                 });
     }
+
+    public List<SessionResponseDTO> getAllActiveSessions() {
+        Instant now = Instant.now();
+        List<ClassSession> sessions = classSessionRepository.findAllActiveSessions(now);
+        return sessions.stream()
+                .map(mapper::toDTO)
+                .toList();
+    }
+
 }

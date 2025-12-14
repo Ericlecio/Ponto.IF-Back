@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/class-session")
 @RequiredArgsConstructor
@@ -24,5 +26,11 @@ public class ClassSessionController {
     @GetMapping("/{offerId}")
     public ResponseEntity<SessionResponseDTO> getByOfferId(@Valid @PathVariable Long offerId) {
         return ResponseEntity.ok(service.getActualSessionId(offerId));
+    }
+
+    @Operation(summary = "Get all activi session")
+    @GetMapping("/allActive")
+    public ResponseEntity<List<SessionResponseDTO>> getAllActive(){
+        return ResponseEntity.ok(service.getAllActiveSessions());
     }
 }
