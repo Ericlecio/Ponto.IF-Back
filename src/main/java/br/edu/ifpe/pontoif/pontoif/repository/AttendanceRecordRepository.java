@@ -8,11 +8,12 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 public interface AttendanceRecordRepository extends JpaRepository<AttendanceRecord, Long> {
-    Collection<AttendanceRecord> findAllBySession_Id(Long id);
-
     @Query("SELECT a FROM AttendanceRecord a WHERE a.session.offering.id = :offeringId")
     List<AttendanceRecord> findAllByOfferingId(@Param("offeringId") Long offeringId);
+
+    List<AttendanceRecord> findAllBySession_Id(Long sessionId);
 }

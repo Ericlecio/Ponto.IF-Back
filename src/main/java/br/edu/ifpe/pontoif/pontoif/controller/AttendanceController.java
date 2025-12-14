@@ -32,4 +32,10 @@ public class AttendanceController {
     public ResponseEntity<List<AttendanceDTO>> getByOffering(@PathVariable Long offeringId) {
         return ResponseEntity.ok(service.getAttendanceByOffering(offeringId));
     }
+
+    @Operation(summary = "Get attdance records by session ID")
+    @GetMapping("/session/{sessionId}")
+    public ResponseEntity<List<AttendanceDTO>> getBySession(@PathVariable Long sessionId) {
+        return ResponseEntity.ok(service.getAttendanceBySession(sessionId));
+    }
 }
