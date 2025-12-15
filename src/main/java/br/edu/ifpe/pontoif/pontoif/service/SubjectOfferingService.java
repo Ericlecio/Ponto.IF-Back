@@ -154,6 +154,7 @@ public class SubjectOfferingService {
 
     @Transactional
     public void endClassSession(Long offeringId, UUID teacherId) {
+
         SubjectOffering offering = offeringRepository.findById(offeringId)
                 .orElseThrow(() -> new NoSuchElementException("Offering not found"));
 
@@ -161,30 +162,15 @@ public class SubjectOfferingService {
             throw new SecurityException("Teacher not authorized for this offering");
         }
 
-        List<ClassSession> sessions = classSessionRepository.findAllByOffering_Id(offeringId);
-        ClassSession active = sessions.stream()
+        ClassSession active = classSessionRepository
+                .findAllByOffering_Id(offeringId)
+                .stream()
                 .filter(s -> s.getSessionEnd() == null)
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No active session to end"));
 
-        var allAttendanceBySession = attendanceRecordRepository.findAllBySession_Id(active.getId());
-        var allEnrollmentsByOffering = enrollmentRepository.findAllByOffering_Id(offeringId);
-        var enrolledStudent = new ArrayList<>(allEnrollmentsByOffering.stream()
-                .map(Enrollment::getStudent)
-                .toList());
-
-        enrolledStudent.removeIf(student -> !allAttendanceBySession.stream().map(AttendanceRecord::getStudent).toList().contains(student));
-        for (User student : enrolledStudent) {
-            AttendanceRecord attendance = new AttendanceRecord();
-            attendance.setSession(active);
-            attendance.setStudent(student);
-            attendance.setConfidence(0.0);
-            attendance.setStatus(AttendanceStatus.ABSENT);
-            attendanceRecordRepository.save(attendance);
-        }
-
+        // ✅ SOMENTE FECHA A SESSÃO
         active.setSessionEnd(Instant.now());
-
         classSessionRepository.save(active);
     }
 }

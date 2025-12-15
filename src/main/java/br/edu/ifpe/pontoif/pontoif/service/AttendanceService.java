@@ -42,24 +42,31 @@ public class AttendanceService {
     @Transactional
     public void registerAttendance(AttendanceDTO dto) {
 
-        AttendanceRecord record = repository
-                .findBySession_IdAndStudent_Id(dto.getSessionId(), dto.getStudentId())
-                .orElseGet(() -> {
-                    AttendanceRecord ar = new AttendanceRecord();
-                    ar.setSession(classSessionRepository.getReferenceById(dto.getSessionId()));
-                    ar.setStudent(userRepository.getReferenceById(dto.getStudentId()));
-                    return ar;
-                });
+        Optional<AttendanceRecord> existing =
+                repository.findBySession_IdAndStudent_Id(
+                        dto.getSessionId(),
+                        dto.getStudentId()
+                );
 
-        // REGRA DE PRIORIDADE
-        if (record.getStatus() == AttendanceStatus.PRESENT) {
-            return; // nunca sobrescreve presença
+        if (existing.isPresent()) {
+            AttendanceRecord record = existing.get();
+
+            // regra: PRESENT > LATE > ABSENT
+            AttendanceStatus newStatus = dto.getStatus();
+
+            if (record.getStatus() != AttendanceStatus.PRESENT) {
+                record.setStatus(newStatus);
+                record.setRecordedAt(Instant.now());
+                record.setConfidence(dto.getConfidence());
+                record.setMetadata(dto.getMetadata());
+
+                repository.save(record);
+            }
+
+            return;
         }
 
-        record.setStatus(dto.getStatus());
-        record.setConfidence(dto.getConfidence());
-        record.setRecordedAt(Instant.now());
-
+        AttendanceRecord record = mapper.toEntity(dto);
         repository.save(record);
     }
 
