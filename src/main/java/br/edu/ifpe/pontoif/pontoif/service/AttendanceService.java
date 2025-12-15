@@ -15,6 +15,7 @@ import br.edu.ifpe.pontoif.pontoif.repository.EnrollmentRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -38,46 +39,26 @@ public class AttendanceService {
 
     @Transactional
     public void registerAttendance(AttendanceDTO dto) {
-        Optional<AttendanceRecord> existing =
-                repository.findBySession_IdAndStudent_Id(
-                        dto.getSessionId(),
-                        dto.getStudentId()
-                );
-
-        if (existing.isPresent()) {
-            AttendanceRecord record = existing.get();
-            if (record.getStatus() == AttendanceStatus.PRESENT) {
-                log.warn(
-                        "⚠️ Attendance already PRESENT → student={} session={}",
-                        dto.getStudentId(),
-                        dto.getSessionId()
-                );
-                return;
-            }
-
-            record.setStatus(dto.getStatus());
-            record.setConfidence(dto.getConfidence());
-            record.setRecordedAt(Instant.now());
+        try {
+            AttendanceRecord record = mapper.toEntity(dto);
             repository.save(record);
 
             log.info(
-                    "🔁 Attendance updated → student={} session={} status={}",
+                    "✅ Attendance created → student={} session={} status={}",
                     dto.getStudentId(),
                     dto.getSessionId(),
                     dto.getStatus()
             );
-            return;
-        }
-        AttendanceRecord newRecord = mapper.toEntity(dto);
-        repository.save(newRecord);
 
-        log.info(
-                "✅ Attendance created → student={} session={} status={}",
-                dto.getStudentId(),
-                dto.getSessionId(),
-                dto.getStatus()
-        );
+        } catch (DataIntegrityViolationException ex) {
+            log.warn(
+                    "⚠️ Duplicate attendance blocked → student={} session={}",
+                    dto.getStudentId(),
+                    dto.getSessionId()
+            );
+        }
     }
+
     public List<AttendanceDTO> getAttendanceByOffering(Long offeringId) {
         return repository.findAllByOfferingId(offeringId).stream()
                 .map(mapper::toDTO)
