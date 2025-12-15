@@ -78,4 +78,9 @@ public class AttendanceController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @Operation(summary = "Get report from offer")
+    @GetMapping("report/offering/{offeringId}")
+    public ResponseEntity<List<StudentAttendanceReportDTO>> getReportFromOffer(@PathVariable Long offeringId){
+        return ResponseEntity.ok(service.generateReport(offeringId));
+    }
 }

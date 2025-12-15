@@ -124,6 +124,76 @@ public class AttendanceService {
         return reportList;
     }
 
+    public List<StudentAttendanceReportDTO> generateReport(Long offeringId) {
+
+        List<Enrollment> enrollments =
+                enrollmentRepository.findAllByOffering_Id(offeringId);
+
+        List<ClassSession> sessions =
+                classSessionRepository.findAllByOffering_Id(offeringId);
+
+        List<AttendanceRecord> records =
+                repository.findAllByOfferingId(offeringId);
+
+        Map<UUID, Map<Long, AttendanceRecord>> attendanceMap =
+                records.stream()
+                        .collect(Collectors.groupingBy(
+                                r -> r.getStudent().getId(),
+                                Collectors.toMap(
+                                        r -> r.getSession().getId(),
+                                        r -> r,
+                                        (a, b) -> a
+                                )
+                        ));
+
+        List<StudentAttendanceReportDTO> report = new ArrayList<>();
+
+        for (Enrollment enrollment : enrollments) {
+
+            UUID studentId = enrollment.getStudent().getId();
+            Map<Long, AttendanceRecord> studentAttendance =
+                    attendanceMap.getOrDefault(studentId, new HashMap<>());
+
+            long totalSessions = sessions.size();
+            long attendedSessions = studentAttendance.values().stream()
+                    .filter(r ->
+                            r.getStatus() == AttendanceStatus.PRESENT ||
+                                    r.getStatus() == AttendanceStatus.LATE
+                    )
+                    .count();
+
+            double percentage = totalSessions == 0
+                    ? 0
+                    : (attendedSessions * 100.0) / totalSessions;
+
+            for (ClassSession session : sessions) {
+                AttendanceRecord record =
+                        studentAttendance.get(session.getId());
+
+                StudentAttendanceReportDTO dto =
+                        StudentAttendanceReportDTO.builder()
+                                .studentId(studentId)
+                                .studentName(enrollment.getStudent().getName())
+                                .studentEmail(enrollment.getStudent().getEmail())
+                                .studentRegistration(enrollment.getStudent().getRegistration())
+                                .sessionId(session.getId())
+                                .attendanceStatus(
+                                        record != null
+                                                ? record.getStatus().name()
+                                                : AttendanceStatus.ABSENT.name()
+                                )
+                                .totalSessions(totalSessions)
+                                .attendedSessions(attendedSessions)
+                                .attendancePercentage(percentage)
+                                .build();
+
+                report.add(dto);
+            }
+        }
+
+        return report;
+    }
+
     private String formatDate(Instant instant) {
         if (instant == null) return "";
         return instant.atZone(ZoneId.systemDefault()).format(DATE_FORMATTER);
