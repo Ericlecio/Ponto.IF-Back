@@ -167,6 +167,22 @@ public class SubjectOfferingService {
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No active session to end"));
 
+        var allAttendanceBySession = attendanceRecordRepository.findAllBySession_Id(active.getId());
+        var allEnrollmentsByOffering = enrollmentRepository.findAllByOffering_Id(offeringId);
+        var enrolledStudent = new ArrayList<>(allEnrollmentsByOffering.stream()
+                .map(Enrollment::getStudent)
+                .toList());
+
+        enrolledStudent.removeIf(student -> !allAttendanceBySession.stream().map(AttendanceRecord::getStudent).toList().contains(student));
+        for (User student : enrolledStudent) {
+            AttendanceRecord attendance = new AttendanceRecord();
+            attendance.setSession(active);
+            attendance.setStudent(student);
+            attendance.setConfidence(0.0);
+            attendance.setStatus(AttendanceStatus.ABSENT);
+            attendanceRecordRepository.save(attendance);
+        }
+
         active.setSessionEnd(Instant.now());
 
         classSessionRepository.save(active);

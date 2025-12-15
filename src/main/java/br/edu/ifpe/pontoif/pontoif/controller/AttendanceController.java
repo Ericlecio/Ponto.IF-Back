@@ -1,15 +1,20 @@
 package br.edu.ifpe.pontoif.pontoif.controller;
 
 import br.edu.ifpe.pontoif.pontoif.dto.AttendanceDTO;
+import br.edu.ifpe.pontoif.pontoif.dto.StudentAttendanceReportDTO;
 import br.edu.ifpe.pontoif.pontoif.service.AttendanceService;
+import br.edu.ifpe.pontoif.pontoif.service.ReportExportService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -19,6 +24,7 @@ import java.util.List;
 public class AttendanceController {
 
     private final AttendanceService service;
+    private final ReportExportService reportExportService;
 
     @Operation(summary = "Register attendance record")
     @PostMapping
@@ -37,5 +43,39 @@ public class AttendanceController {
     @GetMapping("/session/{sessionId}")
     public ResponseEntity<List<AttendanceDTO>> getBySession(@PathVariable Long sessionId) {
         return ResponseEntity.ok(service.getAttendanceBySession(sessionId));
+    }
+
+    @Operation(summary = "Export attendance report to Excel by offering ID")
+    @GetMapping("/offering/{offeringId}/export/excel")
+    public ResponseEntity<byte[]> exportAttendanceToExcel(@PathVariable Long offeringId) {
+        try {
+            List<StudentAttendanceReportDTO> reportData = service.generateAttendanceReport(offeringId);
+            byte[] excelData = reportExportService.exportToExcel(reportData);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", "relatorio_presenca_" + offeringId + ".xlsx");
+
+            return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
+        } catch (IOException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Operation(summary = "Export attendance report to CSV by offering ID")
+    @GetMapping("/offering/{offeringId}/export/csv")
+    public ResponseEntity<String> exportAttendanceToCsv(@PathVariable Long offeringId) {
+        try {
+            List<StudentAttendanceReportDTO> reportData = service.generateAttendanceReport(offeringId);
+            String csvData = reportExportService.exportToCsv(reportData);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType("text/csv; charset=UTF-8"));
+            headers.setContentDispositionFormData("attachment", "relatorio_presenca_" + offeringId + ".csv");
+
+            return new ResponseEntity<>(csvData, headers, HttpStatus.OK);
+        } catch (IOException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
