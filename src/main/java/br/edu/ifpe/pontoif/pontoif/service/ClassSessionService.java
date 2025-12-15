@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -47,4 +48,10 @@ public class ClassSessionService {
                 .toList();
     }
 
+    public List<SessionResponseDTO> getAllBySubject(UUID subjectId) {
+        return classSessionRepository.findAllBySubjectId(subjectId)
+                .stream()
+                .map(mapper::toDTO)
+                .toList();
+    }
 }

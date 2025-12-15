@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/class-session")
@@ -28,9 +29,15 @@ public class ClassSessionController {
         return ResponseEntity.ok(service.getActualSessionId(offerId));
     }
 
-    @Operation(summary = "Get all activi session")
+    @Operation(summary = "Get all active session")
     @GetMapping("/allActive")
     public ResponseEntity<List<SessionResponseDTO>> getAllActive(){
         return ResponseEntity.ok(service.getAllActiveSessions());
+    }
+
+    @Operation(summary = "Get all session by subject id")
+    @GetMapping("/subject/{subjectId}")
+    public ResponseEntity<List<SessionResponseDTO>> getAllBySubject(@PathVariable UUID subjectId){
+        return ResponseEntity.ok(service.getAllBySubject(subjectId));
     }
 }
