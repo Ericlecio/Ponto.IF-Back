@@ -12,6 +12,7 @@ import br.edu.ifpe.pontoif.pontoif.repository.ClassSessionRepository;
 import br.edu.ifpe.pontoif.pontoif.repository.EnrollmentRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -20,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AttendanceService {
@@ -34,7 +36,24 @@ public class AttendanceService {
 
     @Transactional
     public void registerAttendance (AttendanceDTO dto) {
-        repository.save(mapper.toEntity(dto));
+        boolean alreadyPresent =
+                repository.existsBySession_IdAndStudent_IdAndStatus(
+                        dto.getSessionId(),
+                        dto.getStudentId(),
+                        AttendanceStatus.PRESENT
+                );
+
+        if (alreadyPresent) {
+            log.warn(
+                    "⚠️ Attendance already registered → student={} session={}",
+                    dto.getStudentId(),
+                    dto.getSessionId()
+            );
+            return;
+        }
+
+        AttendanceRecord record = mapper.toEntity(dto);
+        repository.save(record);
     }
 
     public List<AttendanceDTO> getAttendanceByOffering(Long offeringId) {
