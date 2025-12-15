@@ -37,27 +37,47 @@ public class AttendanceService {
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
     @Transactional
-    public void registerAttendance (AttendanceDTO dto) {
-        boolean alreadyPresent =
-                repository.existsBySession_IdAndStudent_IdAndStatus(
+    public void registerAttendance(AttendanceDTO dto) {
+        Optional<AttendanceRecord> existing =
+                repository.findBySession_IdAndStudent_Id(
                         dto.getSessionId(),
-                        dto.getStudentId(),
-                        AttendanceStatus.PRESENT
+                        dto.getStudentId()
                 );
 
-        if (alreadyPresent) {
-            log.warn(
-                    "⚠️ Attendance already registered → student={} session={}",
+        if (existing.isPresent()) {
+            AttendanceRecord record = existing.get();
+            if (record.getStatus() == AttendanceStatus.PRESENT) {
+                log.warn(
+                        "⚠️ Attendance already PRESENT → student={} session={}",
+                        dto.getStudentId(),
+                        dto.getSessionId()
+                );
+                return;
+            }
+
+            record.setStatus(dto.getStatus());
+            record.setConfidence(dto.getConfidence());
+            record.setRecordedAt(Instant.now());
+            repository.save(record);
+
+            log.info(
+                    "🔁 Attendance updated → student={} session={} status={}",
                     dto.getStudentId(),
-                    dto.getSessionId()
+                    dto.getSessionId(),
+                    dto.getStatus()
             );
             return;
         }
+        AttendanceRecord newRecord = mapper.toEntity(dto);
+        repository.save(newRecord);
 
-        AttendanceRecord record = mapper.toEntity(dto);
-        repository.save(record);
+        log.info(
+                "✅ Attendance created → student={} session={} status={}",
+                dto.getStudentId(),
+                dto.getSessionId(),
+                dto.getStatus()
+        );
     }
-
     public List<AttendanceDTO> getAttendanceByOffering(Long offeringId) {
         return repository.findAllByOfferingId(offeringId).stream()
                 .map(mapper::toDTO)
@@ -138,7 +158,6 @@ public class AttendanceService {
         List<AttendanceRecord> records =
                 repository.findAllByOfferingId(offeringId);
 
-        // Map: studentId -> (sessionId -> AttendanceRecord)
         Map<UUID, Map<Long, AttendanceRecord>> attendanceMap =
                 records.stream()
                         .collect(Collectors.groupingBy(
