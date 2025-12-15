@@ -12,6 +12,7 @@ import br.edu.ifpe.pontoif.pontoif.mapper.AttendanceMapper;
 import br.edu.ifpe.pontoif.pontoif.repository.AttendanceRecordRepository;
 import br.edu.ifpe.pontoif.pontoif.repository.ClassSessionRepository;
 import br.edu.ifpe.pontoif.pontoif.repository.EnrollmentRepository;
+import br.edu.ifpe.pontoif.pontoif.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,30 +34,33 @@ public class AttendanceService {
     private final AttendanceMapper mapper;
     private final EnrollmentRepository enrollmentRepository;
     private final ClassSessionRepository classSessionRepository;
+    private final UserRepository userRepository;
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
     @Transactional
     public void registerAttendance(AttendanceDTO dto) {
-        try {
-            AttendanceRecord record = mapper.toEntity(dto);
-            repository.save(record);
 
-            log.info(
-                    "✅ Attendance created → student={} session={} status={}",
-                    dto.getStudentId(),
-                    dto.getSessionId(),
-                    dto.getStatus()
-            );
+        AttendanceRecord record = repository
+                .findBySession_IdAndStudent_Id(dto.getSessionId(), dto.getStudentId())
+                .orElseGet(() -> {
+                    AttendanceRecord ar = new AttendanceRecord();
+                    ar.setSession(classSessionRepository.getReferenceById(dto.getSessionId()));
+                    ar.setStudent(userRepository.getReferenceById(dto.getStudentId()));
+                    return ar;
+                });
 
-        } catch (DataIntegrityViolationException ex) {
-            log.warn(
-                    "⚠️ Duplicate attendance blocked → student={} session={}",
-                    dto.getStudentId(),
-                    dto.getSessionId()
-            );
+        // REGRA DE PRIORIDADE
+        if (record.getStatus() == AttendanceStatus.PRESENT) {
+            return; // nunca sobrescreve presença
         }
+
+        record.setStatus(dto.getStatus());
+        record.setConfidence(dto.getConfidence());
+        record.setRecordedAt(Instant.now());
+
+        repository.save(record);
     }
 
     public List<AttendanceDTO> getAttendanceByOffering(Long offeringId) {
