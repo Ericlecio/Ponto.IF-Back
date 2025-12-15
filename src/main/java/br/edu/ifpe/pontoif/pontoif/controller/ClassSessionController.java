@@ -41,9 +41,10 @@ public class ClassSessionController {
         return ResponseEntity.ok(service.getAllBySubject(subjectId));
     }
 
+
     @Operation(summary = "Get all session by offer id")
     @GetMapping("/offering/{offeringId}")
-    public ResponseEntity<List<SessionResponseDTO>> getAllByOffering(@PathVariable Long offeringID){
-        return ResponseEntity.ok(service.getAllByOffering(offeringID));
+    public ResponseEntity<List<SessionResponseDTO>> getAllByOffering(@PathVariable Long offeringId){
+        return ResponseEntity.ok(service.getAllByOffering(offeringId));
     }
 }
