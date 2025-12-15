@@ -13,7 +13,6 @@ public class StudentAttendanceDetailsDTO {
     private String registration;
 
     private Long offeringId;
-    private String subjectName;
     private String teacherName;
 
     private int totalSessions;

@@ -5,10 +5,10 @@ import lombok.Data;
 
 @Data
 public class StudentSessionAttendanceDTO {
+
     private Long sessionId;
     private String sessionDate;
     private String sessionStart;
     private String sessionEnd;
     private AttendanceStatus status;
 }
-

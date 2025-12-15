@@ -1,7 +1,9 @@
 package br.edu.ifpe.pontoif.pontoif.service;
 
 import br.edu.ifpe.pontoif.pontoif.dto.AttendanceDTO;
+import br.edu.ifpe.pontoif.pontoif.dto.StudentAttendanceDetailsDTO;
 import br.edu.ifpe.pontoif.pontoif.dto.StudentAttendanceReportDTO;
+import br.edu.ifpe.pontoif.pontoif.dto.StudentSessionAttendanceDTO;
 import br.edu.ifpe.pontoif.pontoif.entity.AttendanceRecord;
 import br.edu.ifpe.pontoif.pontoif.entity.AttendanceStatus;
 import br.edu.ifpe.pontoif.pontoif.entity.ClassSession;
@@ -124,7 +126,8 @@ public class AttendanceService {
         return reportList;
     }
 
-    public List<StudentAttendanceReportDTO> generateReport(Long offeringId) {
+    @Transactional
+    public List<StudentAttendanceDetailsDTO> getDetailsByOffering(Long offeringId) {
 
         List<Enrollment> enrollments =
                 enrollmentRepository.findAllByOffering_Id(offeringId);
@@ -135,6 +138,7 @@ public class AttendanceService {
         List<AttendanceRecord> records =
                 repository.findAllByOfferingId(offeringId);
 
+        // Map: studentId -> (sessionId -> AttendanceRecord)
         Map<UUID, Map<Long, AttendanceRecord>> attendanceMap =
                 records.stream()
                         .collect(Collectors.groupingBy(
@@ -146,52 +150,69 @@ public class AttendanceService {
                                 )
                         ));
 
-        List<StudentAttendanceReportDTO> report = new ArrayList<>();
+        List<StudentAttendanceDetailsDTO> result = new ArrayList<>();
 
         for (Enrollment enrollment : enrollments) {
 
             UUID studentId = enrollment.getStudent().getId();
             Map<Long, AttendanceRecord> studentAttendance =
-                    attendanceMap.getOrDefault(studentId, new HashMap<>());
+                    attendanceMap.getOrDefault(studentId, Map.of());
 
-            long totalSessions = sessions.size();
-            long attendedSessions = studentAttendance.values().stream()
-                    .filter(r ->
-                            r.getStatus() == AttendanceStatus.PRESENT ||
-                                    r.getStatus() == AttendanceStatus.LATE
-                    )
-                    .count();
+            List<StudentSessionAttendanceDTO> sessionDTOs = new ArrayList<>();
 
-            double percentage = totalSessions == 0
-                    ? 0
-                    : (attendedSessions * 100.0) / totalSessions;
+            int presents = 0;
+            int absents = 0;
 
             for (ClassSession session : sessions) {
+
                 AttendanceRecord record =
                         studentAttendance.get(session.getId());
 
-                StudentAttendanceReportDTO dto =
-                        StudentAttendanceReportDTO.builder()
-                                .studentId(studentId)
-                                .studentName(enrollment.getStudent().getName())
-                                .studentEmail(enrollment.getStudent().getEmail())
-                                .studentRegistration(enrollment.getStudent().getRegistration())
-                                .sessionId(session.getId())
-                                .attendanceStatus(
-                                        record != null
-                                                ? record.getStatus().name()
-                                                : AttendanceStatus.ABSENT.name()
-                                )
-                                .totalSessions(totalSessions)
-                                .attendedSessions(attendedSessions)
-                                .attendancePercentage(percentage)
-                                .build();
+                AttendanceStatus status =
+                        record != null
+                                ? record.getStatus()
+                                : AttendanceStatus.ABSENT;
 
-                report.add(dto);
+                if (status == AttendanceStatus.PRESENT || status == AttendanceStatus.LATE) {
+                    presents++;
+                } else {
+                    absents++;
+                }
+
+                StudentSessionAttendanceDTO sessionDTO =
+                        new StudentSessionAttendanceDTO();
+
+                sessionDTO.setSessionId(session.getId());
+                sessionDTO.setSessionDate(formatDate(session.getSessionStart()));
+                sessionDTO.setSessionStart(formatTime(session.getSessionStart()));
+                sessionDTO.setSessionEnd(
+                        session.getSessionEnd() != null
+                                ? formatTime(session.getSessionEnd())
+                                : null
+                );
+                sessionDTO.setStatus(status);
+
+                sessionDTOs.add(sessionDTO);
             }
+
+            StudentAttendanceDetailsDTO dto = new StudentAttendanceDetailsDTO();
+
+            dto.setStudentId(studentId);
+            dto.setStudentName(enrollment.getStudent().getName());
+            dto.setRegistration(enrollment.getStudent().getRegistration());
+            dto.setOfferingId(offeringId);
+            dto.setTeacherName(
+                    enrollment.getOffering().getTeacher().getName()
+            );
+            dto.setTotalSessions(sessions.size());
+            dto.setPresents(presents);
+            dto.setAbsents(absents);
+            dto.setSessions(sessionDTOs);
+
+            result.add(dto);
         }
 
-        return report;
+        return result;
     }
 
     private String formatDate(Instant instant) {

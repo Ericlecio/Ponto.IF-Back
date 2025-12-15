@@ -1,6 +1,7 @@
 package br.edu.ifpe.pontoif.pontoif.controller;
 
 import br.edu.ifpe.pontoif.pontoif.dto.AttendanceDTO;
+import br.edu.ifpe.pontoif.pontoif.dto.StudentAttendanceDetailsDTO;
 import br.edu.ifpe.pontoif.pontoif.dto.StudentAttendanceReportDTO;
 import br.edu.ifpe.pontoif.pontoif.service.AttendanceService;
 import br.edu.ifpe.pontoif.pontoif.service.ReportExportService;
@@ -78,9 +79,12 @@ public class AttendanceController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @Operation(summary = "Get report from offer")
-    @GetMapping("report/offering/{offeringId}")
-    public ResponseEntity<List<StudentAttendanceReportDTO>> getReportFromOffer(@PathVariable Long offeringId){
-        return ResponseEntity.ok(service.generateReport(offeringId));
+
+    @Operation(summary = "Get attendance details by offering")
+    @GetMapping("/report/offering/{offeringId}")
+    public ResponseEntity<List<StudentAttendanceDetailsDTO>> getDetailsByOffering(
+            @PathVariable Long offeringId
+    ) {
+        return ResponseEntity.ok(service.getDetailsByOffering(offeringId));
     }
 }
