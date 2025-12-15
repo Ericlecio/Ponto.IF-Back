@@ -40,4 +40,10 @@ public class ClassSessionController {
     public ResponseEntity<List<SessionResponseDTO>> getAllBySubject(@PathVariable UUID subjectId){
         return ResponseEntity.ok(service.getAllBySubject(subjectId));
     }
+
+    @Operation(summary = "Get all session by offer id")
+    @GetMapping("/offering/{offeringId}")
+    public ResponseEntity<List<SessionResponseDTO>> getAllByOffering(@PathVariable Long offeringID){
+        return ResponseEntity.ok(service.getAllByOffering(offeringID));
+    }
 }

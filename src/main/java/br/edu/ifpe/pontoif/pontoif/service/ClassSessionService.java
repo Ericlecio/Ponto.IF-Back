@@ -54,4 +54,11 @@ public class ClassSessionService {
                 .map(mapper::toDTO)
                 .toList();
     }
+
+    public List<SessionResponseDTO> getAllByOffering(Long offeringId){
+        return classSessionRepository.findAllByOffering_Id(offeringId)
+                .stream()
+                .map(mapper::toDTO)
+                .toList();
+    }
 }
