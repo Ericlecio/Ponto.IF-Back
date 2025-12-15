@@ -9,7 +9,7 @@ import java.time.Instant;
 import java.util.Map;
 
 @Entity
-@Table(name = "attendance_records")
+@Table(name = "attendance_records", uniqueConstraints = @UniqueConstraint(columnNames = {"session_id", "student_id"}))
 @Getter
 @Setter
 @NoArgsConstructor
